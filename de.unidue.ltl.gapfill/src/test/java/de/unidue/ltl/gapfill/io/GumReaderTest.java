@@ -17,11 +17,15 @@ public class GumReaderTest {
         CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(
                 GUMReader.class,
 				GUMReader.PARAM_SOURCE_LOCATION, "src/main/resources/corpora/GUM",
-                GUMReader.PARAM_PATTERNS, "*.xml"
+                GUMReader.PARAM_PATTERNS, "*.xml",
+                GUMReader.PARAM_LANGUAGE, "en"
         );		
 
         int i = 0;
         for (JCas jcas : new JCasIterable(reader)) {
+//        	for (POS pos : JCasUtil.select(jcas, POS.class)) {
+//        		System.out.println(pos);
+//        	}
         	System.out.println(jcas.getDocumentText());
         	i++;
         }

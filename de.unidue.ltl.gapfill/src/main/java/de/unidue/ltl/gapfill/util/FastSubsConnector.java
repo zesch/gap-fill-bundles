@@ -44,7 +44,7 @@ public class FastSubsConnector {
 		process = pb.start();
 	}
 
-	public List<WeightedSubstitutes> run(String input) 
+	public List<SubstituteVector> getSubstitutes(String input) 
 			throws IOException
 	{
 		writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream(), "UTF-8"));
@@ -53,11 +53,12 @@ public class FastSubsConnector {
 		// write additional line that is used as an indicator when to stop capturing input
 		writeInput(input + " \n");
 
-		List<WeightedSubstitutes> listOfSubs = new ArrayList<>();
+		List<SubstituteVector> listOfSubs = new ArrayList<>();
 		
 		for (String line : captureProcessOutput()) {
+
 			int count = 0;
-			WeightedSubstitutes subs = new WeightedSubstitutes();
+			SubstituteVector subs = new SubstituteVector();
 			for (String item : line.split("\t")) {
 				if (count < nrOfSubs) {
 					String[] parts = item.split(" ");

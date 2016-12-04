@@ -1,15 +1,14 @@
 package de.unidue.ltl.gapfill.indexer;
 
-import java.io.File;
+import java.nio.file.Paths;
 
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.collection.CollectionReaderDescription;
+import org.apache.uima.fit.component.NoOpAnnotator;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.junit.Test;
 
-import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpPosTagger;
-import de.tudarmstadt.ukp.dkpro.core.tokit.BreakIteratorSegmenter;
 import de.unidue.ltl.gapfill.io.GUMReader;
 
 public class CorpusIndexerTest {
@@ -22,15 +21,14 @@ public class CorpusIndexerTest {
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(
 				GUMReader.class,
 				GUMReader.PARAM_SOURCE_LOCATION, "src/main/resources/corpora/GUM",
-				GUMReader.PARAM_PATTERNS, ".xml"
+				GUMReader.PARAM_PATTERNS, "GUM_news_asylum.xml",
+				GUMReader.PARAM_LANGUAGE, "en"
 		);
 		
-		AnalysisEngineDescription preprocessing = AnalysisEngineFactory.createEngineDescription(
-				AnalysisEngineFactory.createEngineDescription(BreakIteratorSegmenter.class),
-				AnalysisEngineFactory.createEngineDescription(OpenNlpPosTagger.class, OpenNlpPosTagger.PARAM_VARIANT, "maxent")
-		);
+		AnalysisEngineDescription preprocessing = AnalysisEngineFactory.createEngineDescription(NoOpAnnotator.class);
 		
-		CorpusIndexer indexer = new CorpusIndexer(new File("target/index"), reader, preprocessing);
+		CorpusIndexer indexer = new CorpusIndexer(Paths.get("target/index"), reader, preprocessing);
 		indexer.index();
+		indexer.close();
 	}
 }
