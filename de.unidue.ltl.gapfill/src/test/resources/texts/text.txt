@@ -1,1 +1,3 @@
-A test file.
+A test file .
+With two sentences .
+EXIT_TOKEN

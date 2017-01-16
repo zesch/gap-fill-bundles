@@ -1,36 +1,84 @@
 package de.unidue.ltl.gapfill.util;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class SubstituteVector {
 
 	private String token;
-	private List<SubstituteEntry> substitutes;
+	private Map<String, Double> entries;
+	
+	// optional attributes that are used to locate the right sentence and position
+	private int sentenceId;
+	private int tokenOffset;
 	
 	public SubstituteVector() {
 		super();
 		this.token = "";
-		this.substitutes = new ArrayList<>();
+		this.entries = new HashMap<>();
 	}
 
-	public void addEntry(String substitute, Double weight) {
-		substitutes.add(new SubstituteEntry(substitute, weight));
+	public SubstituteVector(String token, Object ... entries) {
+		super();
+		this.token = token;
+		this.entries = new HashMap<>();
+		
+		if (entries.length % 2 != 0) {
+			throw new IllegalArgumentException("Values for entries must come in String/Double pairs.");
+		}
+		
+		for (int i=0; i<entries.length; i=i+2) {
+			String key = entries[i].toString();
+			Double value = Double.parseDouble(entries[i+1].toString());
+			this.entries.put(key, value);
+		}
 	}
 	
-	public List<SubstituteEntry> getSubstitutes() {
-		return substitutes;
+	public void addEntry(String substitute, Double weight) {
+		if (entries.containsKey(substitute)) {
+			throw new IllegalArgumentException("Trying to add duplicate entry for '" + substitute + "'");
+		}
+		entries.put(substitute, weight);
 	}
-
-	public void setSubstitutes(List<SubstituteEntry> substitutes) {
-		this.substitutes = substitutes;
+	
+	public Set<String> getSubstitutes() {
+		return entries.keySet();
+	}
+	
+	public boolean containsSubstitute(String substitute) {
+		return entries.containsKey(substitute);
+	}
+	
+	public Double getSubstituteWeight(String substitute) {
+		if (containsSubstitute(substitute)) {
+			return entries.get(substitute);
+		}
+		return 0.0;
 	}
 
 	public String getToken() {
 		return token;
 	}
+	
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public int getSentenceId() {
+		return sentenceId;
+	}
+
+	public void setSentenceId(int sentenceId) {
+		this.sentenceId = sentenceId;
+	}
+
+	public int getTokenOffset() {
+		return tokenOffset;
+	}
+
+	public void setTokenOffset(int tokenOffset) {
+		this.tokenOffset = tokenOffset;
 	}
 
 	@Override
@@ -39,14 +87,19 @@ public class SubstituteVector {
 		sb.append(token);
 		sb.append("\n");
 		
-		int limit = Math.min(5, substitutes.size());
+		int limit = Math.min(5, entries.size());
 		
-		for (int i=0; i<limit; i++) {
+		int i=0;
+		for (Map.Entry<String,Double> entry : entries.entrySet()) {
 			sb.append(" ");
-			sb.append(substitutes.get(i).getSubstitute());
+			sb.append(entry.getKey());
 			sb.append(" - ");
-			sb.append(substitutes.get(i).getWeight());
+			sb.append(entry.getValue());
 			sb.append("\n");
+			
+			if (i == limit) {
+				break;
+			}
 		}
 		sb.append(" ...");
 		

@@ -27,8 +27,7 @@ public class CorpusIndexerTest {
 		
 		AnalysisEngineDescription preprocessing = AnalysisEngineFactory.createEngineDescription(NoOpAnnotator.class);
 		
-		CorpusIndexer indexer = new CorpusIndexer(Paths.get("target/index"), reader, preprocessing);
+		CorpusIndexer indexer = new CorpusIndexer(Paths.get("target/index"), reader, preprocessing, 10);
 		indexer.index();
-		indexer.close();
 	}
 }
