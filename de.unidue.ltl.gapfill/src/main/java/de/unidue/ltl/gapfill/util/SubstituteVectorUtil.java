@@ -1,32 +1,8 @@
 package de.unidue.ltl.gapfill.util;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class SubstituteVectorUtil {
-
-//	public SubstituteVector getBestSubstitute(String targetWord, List<SubstituteVector> currentBundle, List<SubstituteVector> targetSubs) {
-//		float topWeight=ZERO_PROBABILITY;
-//		String topId="";
-//		for(String jcasId: vectors.keySet()){
-//			//check whether the vector is already contained
-//			if(!bestVectorSet.getIds().contains(jcasId)){
-//				VectorSet vectorSet= new VectorSet(bestVectorSet.getVectors(),targetWord);
-//				vectorSet.addVector(jcasId,vectors.get(jcasId));
-////				System.out.println("current match "+vectorSet.getIds() +" "+vectorSet.calculateMeasure());
-//				if(vectorSet.calculateMeasure()>topWeight){
-////					System.out.println(vectorSet.calculateMeasure()+" > "+topWeight+ " --> select "+jcasId + " instead "+topId);
-//					topWeight=vectorSet.calculateMeasure();
-//					topId=jcasId;
-//				}
-//			}
-//		}
-//		HashMap<String, TargetWordVector> topVector = new HashMap<String, TargetWordVector>();
-//		topVector.put(topId,vectors.get(topId));
-//		return topVector;
-//	}
 
 	public static SubstituteVector combineVectors(SubstituteVector ... vectors) {
 		if (vectors.length == 0) {
@@ -52,5 +28,51 @@ public class SubstituteVectorUtil {
 			}
 		}
 		return resultVector;
+	}
+	
+	public static SubstituteVector getBestSubstituteVector(String targetWord, SubstituteVector bundleVector, SubstituteVector ... targetVectors) {
+		if (targetVectors.length == 0) {
+			return null;
+		}
+		
+		SubstituteVector result = targetVectors[0];
+		double maxD = - Double.MAX_VALUE;	// disambiguation measure to maximize
+		
+		for (SubstituteVector targetVector : targetVectors) {
+			SubstituteVector combinedVector = SubstituteVectorUtil.getCombinedVector(bundleVector, targetVector);
+			double D = getD(combinedVector);
+
+			if (D > maxD) {
+				result = targetVector;
+				maxD = D;
+			}
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * @param sv
+	 * @return The disambiguation measure D given a SubstituteVector
+	 */
+	public static double getD(SubstituteVector sv) {		
+		double targetWeight = sv.getSubstituteWeight(sv.getToken());
+		
+		// vector was reduced to only target
+		if (sv.getSubstitutes().size() == 1) {
+			return targetWeight;
+		}
+		
+		double maxAlternativeWeight = - Double.MAX_VALUE;
+		for (String substitute : sv.getSubstitutes()) {
+			if (!substitute.equals(sv.getToken())) {	// don't compare with target itself
+				double substituteWeight = sv.getSubstituteWeight(substitute);
+				if (substituteWeight > maxAlternativeWeight) {
+					maxAlternativeWeight = substituteWeight;
+				}				
+			}
+		}
+		
+		return targetWeight - maxAlternativeWeight;
 	}
 }
