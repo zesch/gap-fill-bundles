@@ -13,7 +13,8 @@ import org.apache.commons.io.*;
 
 import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
 import de.unidue.ltl.gapfill.util.FastSubsConnector;
-import de.unidue.ltl.gapfill.util.SubstituteVector; 
+import de.unidue.ltl.gapfill.util.SubstituteVector;
+import de.unidue.ltl.gapfill.util.SubstituteVectorUtil; 
 
 
 
@@ -47,14 +48,23 @@ public class SubstituteLookup {
 	
 
 	private String getSentence(int sentenceId) throws IOException{
-		return sentences.get(sentenceId);
+		String[] sentence = sentences.get(sentenceId).split(TAB, 2);
+		return sentence[1];
 	}
 	
-	public List<SubstituteVector> getBundle(String token, String pos, int size) throws Exception{
+	public List<SubstituteVector> getBundle(int size, String token, String pos) throws Exception{
 		List<SubstituteVector> substituteVectors = getSubstituteVectors(token, pos);
+		SubstituteVector bundleVector = substituteVectors.get(0);
+		substituteVectors.remove(bundleVector);
 		
 		
-		return null;
+		List<SubstituteVector> result = SubstituteVectorUtil.getBundle(size, bundleVector, substituteVectors);
+		
+		for(SubstituteVector sv : result){
+			System.out.println(sv.getSentenceWithGap());
+		}
+		
+		return result;
 	}
 	
 	public List<SubstituteVector> getSubstituteVectors(String token, String pos) throws Exception{
@@ -94,6 +104,7 @@ public class SubstituteLookup {
 			if(currentSentence == sentenceId && currentToken == tokenId){
 				sub = FastSubsConnector.fastsubs2vector(line, maxSubs);
 				sub.setSentence(getSentence(sentenceId));
+				sub.setTokenId(tokenId);
 			}
 			currentToken++;
 			
