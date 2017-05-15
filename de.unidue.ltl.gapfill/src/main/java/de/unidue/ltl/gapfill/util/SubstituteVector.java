@@ -11,7 +11,8 @@ public class SubstituteVector {
 	
 	// optional attributes that are used to locate the right sentence and position
 	private int sentenceId;
-	private int tokenOffset;
+	private int tokenId;
+	private String sentence;
 	
 	public SubstituteVector() {
 		super();
@@ -73,14 +74,32 @@ public class SubstituteVector {
 		this.sentenceId = sentenceId;
 	}
 
-	public int getTokenOffset() {
-		return tokenOffset;
+	public int getTokenId() {
+		return tokenId;
 	}
 
-	public void setTokenOffset(int tokenOffset) {
-		this.tokenOffset = tokenOffset;
+	public void setTokenId(int tokenId) {
+		this.tokenId = tokenId;
 	}
-
+	
+	public String getSentence(){
+		return sentence;
+	}
+	
+	public void setSentence(String sentence){
+		this.sentence = sentence;
+	}
+	
+	public String getSentenceWithGap(){
+		String[] parts = sentence.split("\t");
+		parts[tokenId] = "_______";
+		String result = "";
+		for(String part : parts){
+			result += "\t" + part;
+		}
+		return result;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
