@@ -1,8 +1,41 @@
 package de.unidue.ltl.gapfill.util;
 
-
+import java.util.ArrayList;
+import java.util.List;
 
 public class SubstituteVectorUtil {
+	
+	public static List<SubstituteVector> getBundle(int size, SubstituteVector bundleVector, List<SubstituteVector> targetVectors){
+		
+		return getGreedyBundle(size, bundleVector, targetVectors);
+	}
+	
+	public static List<SubstituteVector> getGreedyBundle (int size, SubstituteVector bundleVector, List<SubstituteVector> targetVectors){
+		if(size > targetVectors.size() + 1){
+			System.err.println("Greater bundle requested than possible - bundle size will be max. size");
+			size = targetVectors.size();
+		}
+		List<SubstituteVector> resultList = new ArrayList<>();
+		resultList.add(bundleVector);
+		int currentSize = 1;
+		
+		SubstituteVector combinedVector = bundleVector;
+		
+		while(currentSize < size){
+
+			SubstituteVector[] subsArr = new SubstituteVector[targetVectors.size()];
+			subsArr = targetVectors.toArray(subsArr);
+			SubstituteVector bestSub = getBestSubstituteVector(combinedVector, subsArr);
+			resultList.add(bestSub);
+			targetVectors.remove(bestSub);
+			
+			combinedVector = combineVectors(combinedVector, bestSub);
+			currentSize++;
+		}
+		
+		
+		return resultList;
+	}
 
 	public static SubstituteVector combineVectors(SubstituteVector ... vectors) {
 		if (vectors.length == 0) {
@@ -30,7 +63,7 @@ public class SubstituteVectorUtil {
 		return resultVector;
 	}
 	
-	public static SubstituteVector getBestSubstituteVector(String targetWord, SubstituteVector bundleVector, SubstituteVector ... targetVectors) {
+	public static SubstituteVector getBestSubstituteVector(SubstituteVector bundleVector, SubstituteVector ... targetVectors) {
 		if (targetVectors.length == 0) {
 			return null;
 		}
@@ -41,7 +74,6 @@ public class SubstituteVectorUtil {
 		for (SubstituteVector targetVector : targetVectors) {
 			SubstituteVector combinedVector = SubstituteVectorUtil.getCombinedVector(bundleVector, targetVector);
 			double D = getD(combinedVector);
-
 			if (D > maxD) {
 				result = targetVector;
 				maxD = D;
