@@ -45,7 +45,7 @@ public class CorpusIndexer {
 
 	private FastSubsConnector fastsubs;
 	
-	private ConditionalFrequencyDistribution<String, Integer> word2sentence;
+	private ConditionalFrequencyDistribution<String, String> word2sentence;
 	
 	public CorpusIndexer(Path targetLocation, CollectionReaderDescription reader, AnalysisEngineDescription preprocessing, int maxSubs) 
 		throws Exception
@@ -109,8 +109,9 @@ public class CorpusIndexer {
 		throws IOException
 	{
 		sentenceWriter.write(sentenceId.toString());
-				
+		int tokenPosition = 0;
 		for (Token token : JCasUtil.selectCovered(jcas, Token.class, sentence)) {
+			
 			docsWriter.write(token.getCoveredText());
 			docsWriter.write(" ");
 			
@@ -120,8 +121,10 @@ public class CorpusIndexer {
 			POS pos = token.getPos();
 			if (pos instanceof N || pos instanceof V || pos instanceof ADJ) {
 				String wordKey = getWordKey(token.getCoveredText(), pos.getPosValue());
-				word2sentence.inc(wordKey,  sentenceId);				
+				String wordPosition = getWordPosition(sentenceId, tokenPosition);
+				word2sentence.inc(wordKey,  wordPosition );				
 			}
+			tokenPosition++;
 		}
 		docsWriter.newLine();
 		sentenceWriter.newLine();
@@ -132,7 +135,7 @@ public class CorpusIndexer {
 			// only write if a word appears in more than one sentence. No bundle with just one sentence.
 			if (word2sentence.getFrequencyDistribution(word).getKeys().size() > 1) {
 				wordsWriter.write(word);
-				for (Integer id : word2sentence.getFrequencyDistribution(word).getKeys()) {
+				for (String id : word2sentence.getFrequencyDistribution(word).getKeys()) {
 					wordsWriter.write(TAB);
 					wordsWriter.write(id.toString());
 				}
@@ -145,5 +148,9 @@ public class CorpusIndexer {
 	
 	private String getWordKey(String word, String pos) {
 		return word + "_" + pos;
+	}
+	
+	private String getWordPosition(int sentenceId, int tokenOffset){
+		return sentenceId + "_" + tokenOffset;
 	}
 }
