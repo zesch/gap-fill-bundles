@@ -69,7 +69,7 @@ public class SubstituteVectorUtilTest {
 	
 	@Test
 	public void testBestVector() {
-		SubstituteVector result = SubstituteVectorUtil.getBestSubstituteVector("money", sv1, sv2, sv3, sv4, sv1_b);
+		SubstituteVector result = SubstituteVectorUtil.getBestSubstituteVector(sv1, sv2, sv3, sv4, sv1_b);
 		assertEquals(sv1_b, result);
 	}
 }

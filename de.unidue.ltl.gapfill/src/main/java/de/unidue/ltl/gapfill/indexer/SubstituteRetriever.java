@@ -45,7 +45,6 @@ public class SubstituteRetriever {
 			if (line.startsWith(pattern)) {
 				SubstituteVector sv = FastSubsConnector.fastsubs2vector(line, maxSubs);
 				sv.setSentenceId(sentenceId);
-				sv.setTokenOffset(tokenOffset);
 				subs.add(sv);
 			}
 			tokenOffset++;

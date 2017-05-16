@@ -32,12 +32,6 @@ public class BundleExample {
 		CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing, 100);
 		indexer.index();
 		
-		SubstituteRetriever retriever = new SubstituteRetriever(indexPath);
-		for (SubstituteVector sv : retriever.getSubstituteVectors("boat")) {
-			System.out.println(sv.getSentenceId() + ":" + sv.getTokenOffset());
-			System.out.println(sv);
-		}
-		
 //		FastSubsConnector fastsubs = new FastSubsConnector(10, "src/test/resources/lm/brown.lm");
 //		fastsubs.initialize();
 //	
