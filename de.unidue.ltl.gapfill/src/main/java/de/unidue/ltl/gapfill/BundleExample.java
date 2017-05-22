@@ -10,7 +10,6 @@ import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 
 import de.unidue.ltl.gapfill.indexer.CorpusIndexer;
-import de.unidue.ltl.gapfill.indexer.SubstituteRetriever;
 import de.unidue.ltl.gapfill.io.GUMReader;
 import de.unidue.ltl.gapfill.util.SubstituteVector;
 
