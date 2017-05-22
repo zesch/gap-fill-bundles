@@ -23,7 +23,9 @@ import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
 import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.V;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
+import de.unidue.ltl.gapfill.util.DummySubstituteBuilder;
 import de.unidue.ltl.gapfill.util.FastSubsConnector;
+import de.unidue.ltl.gapfill.util.SubstituteBuilder;
 
 public class CorpusIndexer {
 
@@ -46,7 +48,7 @@ public class CorpusIndexer {
 	private Path wordsFile;
 	private Path sentenceFile;
 
-	private FastSubsConnector fastsubs;
+	private SubstituteBuilder substituteBuilder;
 	
 	private ConditionalFrequencyDistribution<String, String> word2sentence;
 	
@@ -74,8 +76,8 @@ public class CorpusIndexer {
 	    this.word2sentence = new ConditionalFrequencyDistribution<>();
 
 		Path lmPath = Paths.get("src/test/resources/lm/brown.lm");
-	    fastsubs = new FastSubsConnector();
-	    fastsubs.initialize(docsFile, subsFile, lmPath, maxSubs);
+		substituteBuilder = new DummySubstituteBuilder();
+		substituteBuilder.initialize(docsFile, subsFile, lmPath, maxSubs);
 	}
 	
 	public void index()
@@ -106,7 +108,7 @@ public class CorpusIndexer {
 		sentenceWriter.flush();
 		sentenceWriter.close();
 		
-		fastsubs.buildSubstitutes();
+		substituteBuilder.buildSubstitutes();
 
 		System.out.println();
 		System.out.println("Indexed " + sentenceId + " sentences.");		

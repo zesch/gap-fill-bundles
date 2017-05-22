@@ -30,7 +30,7 @@ public class BundleExample {
 		
 		Path indexPath = Paths.get("target/index");
 		CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing, 100);
-		//indexer.index();
+		indexer.index();
 		
 
 		
