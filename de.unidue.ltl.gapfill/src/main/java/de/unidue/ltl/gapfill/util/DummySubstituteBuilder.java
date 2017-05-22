@@ -18,7 +18,7 @@ public class DummySubstituteBuilder implements SubstituteBuilder {
 	
 	private String TAB = "\t";
 	
-	private String[] subs = {"The","it","bla","schubidu","asdf"};
+	private String[] subs = {"The","it","bla","schubidu","asdf","is","tree","grass","mountain","cloud"};
 
 	@Override
 	public void initialize(Path inputFile, Path outputFile, Path languageModel, int nrOfSubs) {

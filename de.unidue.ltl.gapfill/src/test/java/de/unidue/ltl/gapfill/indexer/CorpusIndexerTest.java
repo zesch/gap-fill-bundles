@@ -10,6 +10,7 @@ import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.junit.Test;
 
 import de.unidue.ltl.gapfill.io.GUMReader;
+import de.unidue.ltl.gapfill.util.FastSubsConnector;
 
 public class CorpusIndexerTest {
 
@@ -27,7 +28,8 @@ public class CorpusIndexerTest {
 		
 		AnalysisEngineDescription preprocessing = AnalysisEngineFactory.createEngineDescription(NoOpAnnotator.class);
 		
-		CorpusIndexer indexer = new CorpusIndexer(Paths.get("target/index"), reader, preprocessing, 10);
+		FastSubsConnector fsc = new FastSubsConnector();
+		CorpusIndexer indexer = new CorpusIndexer(Paths.get("target/index"), reader, preprocessing, fsc,10);
 		indexer.index();
 	}
 }

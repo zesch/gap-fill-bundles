@@ -52,11 +52,16 @@ public class CorpusIndexer {
 	
 	private ConditionalFrequencyDistribution<String, String> word2sentence;
 	
-	public CorpusIndexer(Path targetLocation, CollectionReaderDescription reader, AnalysisEngineDescription preprocessing, int maxSubs) 
+	public CorpusIndexer(Path targetLocation, 
+			CollectionReaderDescription reader, 
+			AnalysisEngineDescription preprocessing,
+			SubstituteBuilder substituteBuilder,
+			int maxSubs) 
 		throws Exception
 	{
 		this.reader = reader;
 		this.preprocessing = preprocessing;
+		this.substituteBuilder = substituteBuilder;
 		
 		if (Files.notExists(targetLocation)) {
 			Files.createDirectories(targetLocation);			
@@ -76,7 +81,6 @@ public class CorpusIndexer {
 	    this.word2sentence = new ConditionalFrequencyDistribution<>();
 
 		Path lmPath = Paths.get("src/test/resources/lm/brown.lm");
-		substituteBuilder = new DummySubstituteBuilder();
 		substituteBuilder.initialize(docsFile, subsFile, lmPath, maxSubs);
 	}
 	

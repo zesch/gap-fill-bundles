@@ -11,6 +11,8 @@ import org.apache.uima.fit.factory.CollectionReaderFactory;
 
 import de.unidue.ltl.gapfill.indexer.CorpusIndexer;
 import de.unidue.ltl.gapfill.io.GUMReader;
+import de.unidue.ltl.gapfill.util.DummySubstituteBuilder;
+import de.unidue.ltl.gapfill.util.FastSubsConnector;
 import de.unidue.ltl.gapfill.util.SubstituteVector;
 
 public class BundleExample {
@@ -28,7 +30,7 @@ public class BundleExample {
 		AnalysisEngineDescription preprocessing = AnalysisEngineFactory.createEngineDescription(NoOpAnnotator.class);
 		
 		Path indexPath = Paths.get("target/index");
-		CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing, 100);
+		CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing, new FastSubsConnector(), 10);
 		indexer.index();
 		
 
