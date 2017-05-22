@@ -42,6 +42,8 @@ public class CorpusIndexer {
 	
 	private Path docsFile;
 	private Path subsFile;
+	private Path wordsFile;
+	private Path sentenceFile;
 
 	private FastSubsConnector fastsubs;
 	
@@ -59,9 +61,13 @@ public class CorpusIndexer {
 		
 		this.docsFile = targetLocation.resolve(DOCS_FILE_NAME);
 		this.subsFile = targetLocation.resolve(SUBS_FILE_NAME);
+		this.wordsFile = targetLocation.resolve(WORDS_FILE_NAME);
+		this.sentenceFile = targetLocation.resolve(SENTENCE_FILE_NAME);
 		
-	    this.sentenceWriter = Files.newBufferedWriter(targetLocation.resolve(SENTENCE_FILE_NAME), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
-	    this.wordsWriter = Files.newBufferedWriter(targetLocation.resolve(WORDS_FILE_NAME), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+		clearFiles();
+		
+	    this.sentenceWriter = Files.newBufferedWriter(sentenceFile, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+	    this.wordsWriter = Files.newBufferedWriter(wordsFile, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
 	    this.docsWriter = Files.newBufferedWriter(docsFile, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
 	    
 	    this.word2sentence = new ConditionalFrequencyDistribution<>();
@@ -144,6 +150,17 @@ public class CorpusIndexer {
 		}
 		wordsWriter.flush();
 		wordsWriter.close();
+	}
+	
+	private void clearFiles() throws Exception{
+		if(docsFile.toFile().delete())
+			docsFile.toFile().createNewFile();
+		if(subsFile.toFile().delete())
+			subsFile.toFile().createNewFile();
+		if(wordsFile.toFile().delete())
+			wordsFile.toFile().createNewFile();
+		if(sentenceFile.toFile().delete())
+			sentenceFile.toFile().createNewFile();
 	}
 	
 	private String getWordKey(String word, String pos) {
