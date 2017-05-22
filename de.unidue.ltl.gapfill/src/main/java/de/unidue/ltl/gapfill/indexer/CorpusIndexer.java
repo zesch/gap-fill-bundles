@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import org.apache.uima.analysis_engine.AnalysisEngine;
@@ -71,10 +72,10 @@ public class CorpusIndexer {
 	    this.docsWriter = Files.newBufferedWriter(docsFile, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
 	    
 	    this.word2sentence = new ConditionalFrequencyDistribution<>();
-	    
-		String lmPath = "src/test/resources/lm/brown.lm";
-	    fastsubs = new FastSubsConnector(maxSubs, lmPath);
-	    fastsubs.initialize();
+
+		Path lmPath = Paths.get("src/test/resources/lm/brown.lm");
+	    fastsubs = new FastSubsConnector();
+	    fastsubs.initialize(docsFile, subsFile, lmPath, maxSubs);
 	}
 	
 	public void index()
@@ -105,7 +106,7 @@ public class CorpusIndexer {
 		sentenceWriter.flush();
 		sentenceWriter.close();
 		
-		fastsubs.batchProcess(docsFile, subsFile);
+		fastsubs.buildSubstitutes();
 
 		System.out.println();
 		System.out.println("Indexed " + sentenceId + " sentences.");		

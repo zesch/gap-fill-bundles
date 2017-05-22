@@ -30,12 +30,8 @@ public class BundleExample {
 		
 		Path indexPath = Paths.get("target/index");
 		CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing, 100);
-		indexer.index();
+		//indexer.index();
 		
-//		FastSubsConnector fastsubs = new FastSubsConnector(10, "src/test/resources/lm/brown.lm");
-//		fastsubs.initialize();
-//	
-//		List<SubstituteVector> subs = fastsubs.getSubstitutes("This is an example");
 
 		
 	}

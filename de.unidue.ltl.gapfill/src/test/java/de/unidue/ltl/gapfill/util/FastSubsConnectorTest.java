@@ -2,6 +2,7 @@ package de.unidue.ltl.gapfill.util;
 
 import static org.junit.Assert.assertEquals;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -15,21 +16,25 @@ public class FastSubsConnectorTest {
     public TemporaryFolder tmpFolder = new TemporaryFolder();
 	
 	@Test
-	public void batchProcessTest() 
+	public void buildSubstitutesTest() 
 		throws Exception
 	{
-		String lmPath = "src/test/resources/lm/brown.lm";
-		FastSubsConnector fastsubs = new FastSubsConnector(10, lmPath);
-		fastsubs.batchProcess(Paths.get("src/test/resources/texts/text.txt"), Paths.get("target/output.txt"));
+		Path lmPath = Paths.get("src/test/resources/lm/brown.lm");
+		FastSubsConnector fastsubs = new FastSubsConnector();
+		fastsubs.initialize(Paths.get("src/test/resources/texts/text.txt"), 
+										Paths.get("target/output.txt"), 
+										lmPath, 
+										10);
+		fastsubs.buildSubstitutes();
 	}
 
 	@Test
 	public void fastsubsTest() 
 		throws Exception
 	{
-		String lmPath = "src/test/resources/lm/brown.lm";
-		FastSubsConnector fastsubs = new FastSubsConnector(10, lmPath);
-		fastsubs.initialize();
+		Path lmPath = Paths.get("src/test/resources/lm/brown.lm");
+		FastSubsConnector fastsubs = new FastSubsConnector();
+		fastsubs.initialize(null, null, lmPath, 10);
 		List<SubstituteVector> subs = fastsubs.getSubstitutes("This is an example");
 		
 		assertEquals(4, subs.size());

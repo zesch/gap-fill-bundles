@@ -3,6 +3,7 @@ package de.unidue.ltl.gapfill.util;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.ProcessBuilder.Redirect;
@@ -23,7 +24,7 @@ import de.tudarmstadt.ukp.dkpro.core.api.resources.RuntimeProvider;
  * 
  *  @see <a href="https://github.com/ai-ku/fastsubs">https://github.com/ai-ku/fastsubs</a> 
  */
-public class FastSubsConnector {
+public class FastSubsConnector implements SubstituteBuilder {
 	
 	public final static String EXIT_TOKEN = "EXIT_TOKEN";
 
@@ -35,29 +36,34 @@ public class FastSubsConnector {
 	private BufferedReader reader;
 	
     private int nrOfSubs;
-    private String languageModelPath;
+    private Path languageModelPath;
     
-	public FastSubsConnector(int nrOfSubs, String languageModelPath) {
+    private Path inputFile;
+    private Path outputFile;
+    
+	public FastSubsConnector() {
 		super();
-		this.nrOfSubs = nrOfSubs;
-		this.languageModelPath = languageModelPath;
 	}
 	
-	public void batchProcess(Path inputFile, Path outputFile)
+	@Override
+	public void buildSubstitutes()
 		throws IOException, InterruptedException
 	{
 		// TODO reading input file and directly processing it, does not work
 		// TODO parameter for restricting output to top n does not work
-		ProcessBuilder pb = new ProcessBuilder(getExecutablePath(), languageModelPath, "<", inputFile.toAbsolutePath().toString());
+		ProcessBuilder pb = new ProcessBuilder(getExecutablePath(),getLanguageModelPath(), "<", inputFile.toAbsolutePath().toString());
 		pb.redirectError(Redirect.INHERIT);
 		process = pb.start();
-		
+
+	
+	    	
 		writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream(), "UTF-8"));
 		reader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
 		
 		writeInput(FileUtils.readFileToString(inputFile.toFile()) + " \n");
 
 	    BufferedWriter outputWriter = Files.newBufferedWriter(outputFile, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+
 
         for (String line : captureProcessOutput(EXIT_TOKEN)) {
     		int count = 0;
@@ -74,14 +80,26 @@ public class FastSubsConnector {
         }
         outputWriter.flush();
         outputWriter.close();
+        
+        
 	}
 
-	public void initialize() 
-			throws IOException
+	@Override
+	public void initialize(Path inputFile, Path outputFile, Path languageModelPath, int nrOfSubs) 
 	{
-		ProcessBuilder pb = new ProcessBuilder(getExecutablePath(), languageModelPath);
-		pb.redirectError(Redirect.INHERIT);
-		process = pb.start();
+		this.inputFile = inputFile;
+		this.outputFile = outputFile;
+		this.languageModelPath = languageModelPath;
+		this.nrOfSubs = nrOfSubs;
+		
+		try{
+			ProcessBuilder pb = new ProcessBuilder(getExecutablePath(), getLanguageModelPath());
+			pb.redirectError(Redirect.INHERIT);
+			process = pb.start();
+		}catch (IOException e){
+			e.printStackTrace();
+		}
+
 	}
 
 	public List<SubstituteVector> getSubstitutes(String input) 
@@ -111,6 +129,10 @@ public class FastSubsConnector {
         String executablePath = runtimeProvider.getFile("fastsubs").getAbsolutePath();
 
         return executablePath;
+    }
+    
+    private String getLanguageModelPath(){
+    	return languageModelPath.toAbsolutePath().toString();
     }
     
     private List<String> captureProcessOutput(String breakCondition) 
