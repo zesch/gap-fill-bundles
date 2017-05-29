@@ -5,12 +5,34 @@ import java.util.List;
 
 public class SubstituteVectorUtil {
 	
-	public static List<SubstituteVector> getBundle(int size, SubstituteVector bundleVector, List<SubstituteVector> targetVectors){
+	
+	public static List<SubstituteVector> getBundle(List<SubstituteVector> substituteVectors, int size){
+		if(substituteVectors.size() == 0)
+			return null;
 		
-		return getGreedyBundle(size, bundleVector, targetVectors);
+		SubstituteVector best = substituteVectors.get(0);
+		double maxD = - Double.MAX_VALUE;
+		
+		for(SubstituteVector substituteVector : substituteVectors){
+			double D = getD(substituteVector);
+			if (D > maxD) {
+				best = substituteVector;
+				maxD = D;
+			}
+		}
+		
+		substituteVectors.remove(best);
+		
+		return getGreedyBundle(best, substituteVectors,size);
 	}
 	
-	public static List<SubstituteVector> getGreedyBundle (int size, SubstituteVector bundleVector, List<SubstituteVector> targetVectors){
+	public static List<SubstituteVector> getBundle(int size, SubstituteVector bundleVector, List<SubstituteVector> targetVectors){
+		return getGreedyBundle(bundleVector, targetVectors,size);
+	}
+	
+
+	
+	public static List<SubstituteVector> getGreedyBundle (SubstituteVector bundleVector, List<SubstituteVector> targetVectors,int size){
 		if(size > targetVectors.size() + 1){
 			System.err.println("Greater bundle requested than possible - bundle size will be max. size");
 			size = targetVectors.size();
