@@ -26,7 +26,7 @@ public class SubstituteVectorUtil {
 		return getGreedyBundle(best, substituteVectors,size);
 	}
 	
-	public static List<SubstituteVector> getBundle(int size, SubstituteVector bundleVector, List<SubstituteVector> targetVectors){
+	public static List<SubstituteVector> getBundle(SubstituteVector bundleVector, List<SubstituteVector> targetVectors, int size){
 		return getGreedyBundle(bundleVector, targetVectors,size);
 	}
 	

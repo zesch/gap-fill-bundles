@@ -95,7 +95,7 @@ public class SubstituteVector {
 		parts[tokenId] = "_______";
 		String result = "";
 		for(String part : parts){
-			result += "\t" + part;
+			result += " " + part;
 		}
 		return result;
 	}

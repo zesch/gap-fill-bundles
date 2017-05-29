@@ -112,10 +112,14 @@ public class CorpusIndexer {
 		sentenceWriter.flush();
 		sentenceWriter.close();
 		
-		substituteBuilder.buildSubstitutes();
 
 		System.out.println();
 		System.out.println("Indexed " + sentenceId + " sentences.");		
+	}
+	
+	public void buildSubstitutes() throws Exception{
+		substituteBuilder.buildSubstitutes();
+		System.out.println("Substitutes build.");
 	}
 		
 	private void indexSentence(JCas jcas, Sentence sentence, Integer sentenceId)
@@ -132,7 +136,8 @@ public class CorpusIndexer {
 			sentenceWriter.write(token.getCoveredText());
 			
 			POS pos = token.getPos();
-			if (pos instanceof N || pos instanceof V || pos instanceof ADJ) {
+
+			if (pos instanceof N || pos.getPosValue().startsWith("V")|| pos instanceof ADJ) {
 				String wordKey = getWordKey(token.getCoveredText(), pos.getPosValue());
 				String wordPosition = getWordPosition(sentenceId, tokenPosition);
 				word2sentence.inc(wordKey,  wordPosition );				

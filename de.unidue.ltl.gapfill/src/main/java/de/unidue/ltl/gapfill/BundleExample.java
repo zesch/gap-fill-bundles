@@ -23,7 +23,7 @@ public class BundleExample {
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(
 				GUMReader.class,
 				GUMReader.PARAM_SOURCE_LOCATION, "src/main/resources/corpora/GUM",
-				GUMReader.PARAM_PATTERNS, "GUM_news_asylum.xml",
+				GUMReader.PARAM_PATTERNS, "*.xml",
 				GUMReader.PARAM_LANGUAGE, "en"
 		);
 		
@@ -32,7 +32,7 @@ public class BundleExample {
 		Path indexPath = Paths.get("target/index");
 		CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing, new FastSubsConnector(), 10);
 		indexer.index();
-		
+		//indexer.buildSubstitutes();
 
 		
 	}

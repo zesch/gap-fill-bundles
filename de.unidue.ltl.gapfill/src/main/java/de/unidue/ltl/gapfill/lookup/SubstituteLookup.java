@@ -54,14 +54,14 @@ public class SubstituteLookup {
 	
 	public List<SubstituteVector> getBundle(int size, String token, String pos) throws Exception{
 		List<SubstituteVector> substituteVectors = getSubstituteVectors(token, pos);
-		SubstituteVector bundleVector = substituteVectors.get(0);
-		substituteVectors.remove(bundleVector);
+
 		
+		List<SubstituteVector> result = SubstituteVectorUtil.getBundle(substituteVectors, size);
 		
-		List<SubstituteVector> result = SubstituteVectorUtil.getBundle(size, bundleVector, substituteVectors);
-		
+		int i = 1; 
 		for(SubstituteVector sv : result){
-			System.out.println(sv.getSentenceWithGap());
+			System.out.println(i + ": " + sv.getSentenceWithGap());
+			i++;
 		}
 		
 		return result;
