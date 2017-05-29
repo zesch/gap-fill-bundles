@@ -72,11 +72,7 @@ public class CorpusIndexer {
 		this.wordsFile = targetLocation.resolve(WORDS_FILE_NAME);
 		this.sentenceFile = targetLocation.resolve(SENTENCE_FILE_NAME);
 		
-		clearFiles();
-		
-	    this.sentenceWriter = Files.newBufferedWriter(sentenceFile, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
-	    this.wordsWriter = Files.newBufferedWriter(wordsFile, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
-	    this.docsWriter = Files.newBufferedWriter(docsFile, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+
 	    
 	    this.word2sentence = new ConditionalFrequencyDistribution<>();
 
@@ -87,6 +83,12 @@ public class CorpusIndexer {
 	public void index()
 		throws Exception
 	{
+		clearFiles();
+		
+	    this.sentenceWriter = Files.newBufferedWriter(sentenceFile, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+	    this.wordsWriter = Files.newBufferedWriter(wordsFile, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+	    this.docsWriter = Files.newBufferedWriter(docsFile, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+		
 		AnalysisEngine engine = AnalysisEngineFactory.createEngine(preprocessing);
 		Integer sentenceId = 0;
 		for (JCas jcas : new JCasIterable(reader)) {
@@ -118,6 +120,8 @@ public class CorpusIndexer {
 	}
 	
 	public void buildSubstitutes() throws Exception{
+		if(subsFile.toFile().delete())
+			subsFile.toFile().createNewFile();
 		substituteBuilder.buildSubstitutes();
 		System.out.println("Substitutes build.");
 	}
@@ -167,8 +171,7 @@ public class CorpusIndexer {
 	private void clearFiles() throws Exception{
 		if(docsFile.toFile().delete())
 			docsFile.toFile().createNewFile();
-		if(subsFile.toFile().delete())
-			subsFile.toFile().createNewFile();
+
 		if(wordsFile.toFile().delete())
 			wordsFile.toFile().createNewFile();
 		if(sentenceFile.toFile().delete())

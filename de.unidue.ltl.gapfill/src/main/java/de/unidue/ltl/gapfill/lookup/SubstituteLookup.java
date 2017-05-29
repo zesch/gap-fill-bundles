@@ -54,10 +54,9 @@ public class SubstituteLookup {
 	
 	public List<SubstituteVector> getBundle(int size, String token, String pos) throws Exception{
 		List<SubstituteVector> substituteVectors = getSubstituteVectors(token, pos);
-
 		
 		List<SubstituteVector> result = SubstituteVectorUtil.getBundle(substituteVectors, size);
-		
+
 		int i = 1; 
 		for(SubstituteVector sv : result){
 			System.out.println(i + ": " + sv.getSentenceWithGap());
@@ -73,7 +72,7 @@ public class SubstituteLookup {
 		
 		String line;
 		while((line = wordsReader.readLine()) != null){
-			if(line.startsWith(token + "_" + pos))
+			if(line.startsWith(token + "_" + pos + "\t"))
 				break;
 		}
 		
@@ -86,13 +85,13 @@ public class SubstituteLookup {
 			String[] sentenceTokenPair = occurence.split("_");
 			int sentenceId = Integer.parseInt(sentenceTokenPair[0]);
 			int tokenId = Integer.parseInt(sentenceTokenPair[1]);
-			substituteVectors.add(getSubstituteVector(sentenceId, tokenId));
+			substituteVectors.add(getSubstituteVector(token, sentenceId, tokenId));
 		}
 		
 		return substituteVectors;
 	}
 	
-	private SubstituteVector getSubstituteVector(int sentenceId, int tokenId) throws IOException{
+	private SubstituteVector getSubstituteVector(String token, int sentenceId, int tokenId) throws IOException{
 		this.subsReader = Files.newBufferedReader(targetLocation.resolve(SUBS_FILE_NAME));
 		String line;
 		int currentSentence = 0;
@@ -105,6 +104,7 @@ public class SubstituteLookup {
 				sub = FastSubsConnector.fastsubs2vector(line, maxSubs);
 				sub.setSentence(getSentence(sentenceId));
 				sub.setTokenId(tokenId);
+				sub.setToken(token);
 			}
 			currentToken++;
 			
