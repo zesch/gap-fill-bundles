@@ -59,7 +59,10 @@ public class BaselineSubstituteBuilder implements SubstituteBuilder {
 		BufferedWriter bw = Files.newBufferedWriter(outputFile);
 		String inputline;
 		while((inputline = br.readLine())!=null){
+			if(inputline.equals("EXIT_TOKEN"))
+				break;
 			String[] words = inputline.split(" ");
+			
 			for(String word : words){
 				String line = word + getRandomSubstituteVector();
 				bw.write(line);
