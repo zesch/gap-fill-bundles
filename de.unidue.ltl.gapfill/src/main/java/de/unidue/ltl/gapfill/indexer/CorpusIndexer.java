@@ -23,7 +23,7 @@ import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
 import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.V;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
-import de.unidue.ltl.gapfill.util.DummySubstituteBuilder;
+import de.unidue.ltl.gapfill.util.BaselineSubstituteBuilder;
 import de.unidue.ltl.gapfill.util.FastSubsConnector;
 import de.unidue.ltl.gapfill.util.SubstituteBuilder;
 
@@ -52,7 +52,7 @@ public class CorpusIndexer {
 	
 	private ConditionalFrequencyDistribution<String, String> word2sentence;
 	
-	public CorpusIndexer(Path targetLocation, 
+	public CorpusIndexer(Path indexPath, 
 			CollectionReaderDescription reader, 
 			AnalysisEngineDescription preprocessing,
 			SubstituteBuilder substituteBuilder,
@@ -63,21 +63,20 @@ public class CorpusIndexer {
 		this.preprocessing = preprocessing;
 		this.substituteBuilder = substituteBuilder;
 		
-		if (Files.notExists(targetLocation)) {
-			Files.createDirectories(targetLocation);			
+		if (Files.notExists(indexPath)) {
+			Files.createDirectories(indexPath);			
 		}
 		
-		this.docsFile = targetLocation.resolve(DOCS_FILE_NAME);
-		this.subsFile = targetLocation.resolve(SUBS_FILE_NAME);
-		this.wordsFile = targetLocation.resolve(WORDS_FILE_NAME);
-		this.sentenceFile = targetLocation.resolve(SENTENCE_FILE_NAME);
+		this.docsFile = indexPath.resolve(DOCS_FILE_NAME);
+		this.subsFile = indexPath.resolve(SUBS_FILE_NAME);
+		this.wordsFile = indexPath.resolve(WORDS_FILE_NAME);
+		this.sentenceFile = indexPath.resolve(SENTENCE_FILE_NAME);
 		
 
 	    
 	    this.word2sentence = new ConditionalFrequencyDistribution<>();
 
 		Path lmPath = Paths.get("src/test/resources/lm/brown.lm");
-		substituteBuilder.initialize(docsFile, subsFile, lmPath, maxSubs);
 	}
 	
 	public void index()

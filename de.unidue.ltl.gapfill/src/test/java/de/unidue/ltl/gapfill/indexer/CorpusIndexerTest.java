@@ -1,5 +1,6 @@
 package de.unidue.ltl.gapfill.indexer;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
@@ -27,8 +28,8 @@ public class CorpusIndexerTest {
 		);
 		
 		AnalysisEngineDescription preprocessing = AnalysisEngineFactory.createEngineDescription(NoOpAnnotator.class);
-		
-		FastSubsConnector fsc = new FastSubsConnector();
+		Path lmPath = Paths.get("src/test/resources/lm/brown.lm");
+		FastSubsConnector fsc = new FastSubsConnector(Paths.get("target/index"), lmPath, 10);
 		CorpusIndexer indexer = new CorpusIndexer(Paths.get("target/index"), reader, preprocessing, fsc,10);
 		indexer.index();
 	}

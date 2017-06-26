@@ -20,11 +20,9 @@ public class FastSubsConnectorTest {
 		throws Exception
 	{
 		Path lmPath = Paths.get("src/test/resources/lm/brown.lm");
-		FastSubsConnector fastsubs = new FastSubsConnector();
-		fastsubs.initialize(Paths.get("src/test/resources/texts/text.txt"), 
-										Paths.get("target/output.txt"), 
-										lmPath, 
-										10);
+		FastSubsConnector fastsubs = new FastSubsConnector(Paths.get("src/test/resources/texts/"), 
+				lmPath, 
+				10);
 		fastsubs.buildSubstitutes();
 	}
 
@@ -33,8 +31,7 @@ public class FastSubsConnectorTest {
 		throws Exception
 	{
 		Path lmPath = Paths.get("src/test/resources/lm/brown.lm");
-		FastSubsConnector fastsubs = new FastSubsConnector();
-		fastsubs.initialize(null, null, lmPath, 10);
+		FastSubsConnector fastsubs = new FastSubsConnector(null, lmPath, 10);
 		List<SubstituteVector> subs = fastsubs.getSubstitutes("This is an example");
 		
 		assertEquals(4, subs.size());

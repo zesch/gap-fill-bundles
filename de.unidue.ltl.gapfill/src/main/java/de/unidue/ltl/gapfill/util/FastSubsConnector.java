@@ -26,6 +26,9 @@ import de.tudarmstadt.ukp.dkpro.core.api.resources.RuntimeProvider;
  */
 public class FastSubsConnector implements SubstituteBuilder {
 	
+
+	public static final String DOCS_FILE_NAME = "docs.txt";
+	public static final String SUBS_FILE_NAME = "subs.txt";
 	public final static String EXIT_TOKEN = "EXIT_TOKEN";
 
     private RuntimeProvider runtimeProvider = null;
@@ -41,8 +44,19 @@ public class FastSubsConnector implements SubstituteBuilder {
     private Path inputFile;
     private Path outputFile;
     
-	public FastSubsConnector() {
-		super();
+	public FastSubsConnector(Path indexPath, Path languageModelPath, int nrOfSubs) {
+		this.inputFile = indexPath.resolve(DOCS_FILE_NAME);
+		this.outputFile = indexPath.resolve(SUBS_FILE_NAME);
+		this.languageModelPath = languageModelPath;
+		this.nrOfSubs = nrOfSubs;
+		
+		try{
+			ProcessBuilder pb = new ProcessBuilder(getExecutablePath(), getLanguageModelPath());
+			pb.redirectError(Redirect.INHERIT);
+			process = pb.start();
+		}catch (IOException e){
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -82,24 +96,6 @@ public class FastSubsConnector implements SubstituteBuilder {
         outputWriter.close();
         
         
-	}
-
-	@Override
-	public void initialize(Path inputFile, Path outputFile, Path languageModelPath, int nrOfSubs) 
-	{
-		this.inputFile = inputFile;
-		this.outputFile = outputFile;
-		this.languageModelPath = languageModelPath;
-		this.nrOfSubs = nrOfSubs;
-		
-		try{
-			ProcessBuilder pb = new ProcessBuilder(getExecutablePath(), getLanguageModelPath());
-			pb.redirectError(Redirect.INHERIT);
-			process = pb.start();
-		}catch (IOException e){
-			e.printStackTrace();
-		}
-
 	}
 
 	public List<SubstituteVector> getSubstitutes(String input) 
