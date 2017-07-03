@@ -1,4 +1,4 @@
-package de.unidue.ltl.gapfill.util;
+package de.unidue.ltl.gapfill.subsbuilder;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,11 +19,15 @@ import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 
+import com.googlecode.jweb1t.JWeb1TSearcher;
+import com.googlecode.jweb1t.Searcher;
+
 import de.tudarmstadt.ukp.dkpro.core.api.frequency.util.FrequencyDistribution;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
+import de.unidue.ltl.gapfill.util.Substitute;
 
-public class KenLMSubsConnector implements SubstituteBuilder {
+public class JWeb1TSubsBuilder implements SubstituteBuilder {
 	
 	public static final String SENTENCE_FILE_NAME = "sentences.txt";
 	public static final String WORDS_FILE_NAME = "words.txt";
@@ -32,28 +36,31 @@ public class KenLMSubsConnector implements SubstituteBuilder {
 	
 	public static final String TAB = "\t";
 
-	Path languageModel;
-	Path inputFile;
-	Path outputFile;
+	Path sentenceFile;
+	Path subsFile;
 	FrequencyDistribution<String> fd;
 	int nrOfSubs;
 	
-	public KenLMSubsConnector(Path indexPath, Path languageModel, int nrOfSubs, CollectionReaderDescription reader, AnalysisEngineDescription preprocessing){
-		this.inputFile = indexPath.resolve(SENTENCE_FILE_NAME);
-		this.outputFile = indexPath.resolve(SUBS_FILE_NAME);
-		this.languageModel = languageModel;
+	Searcher trigramSearcher;
+	Searcher bigramSearcher;
+	Searcher unigramSearcher;
+	
+	public JWeb1TSubsBuilder(Path indexPath,int nrOfSubs){
+		this.sentenceFile = indexPath.resolve(SENTENCE_FILE_NAME);
+		this.subsFile = indexPath.resolve(SUBS_FILE_NAME);
 		this.nrOfSubs = nrOfSubs;
 		try{
-			buildFD(reader, preprocessing);
-		}catch(Exception e) {
+			trigramSearcher = new JWeb1TSearcher(new File("/home/henry/Schreibtisch/wiki_en"), 3,3);
+		}catch(IOException e){
 			e.printStackTrace();
 		}
 	}
+	
 	@Override
 	public void buildSubstitutes() throws Exception {
 
 
-		List<String> sentences = FileUtils.readLines(inputFile.toFile());
+		List<String> sentences = FileUtils.readLines(sentenceFile.toFile());
 		for(String sentence : sentences){
 			String[] split = sentence.split(TAB);
 			for(int i = 1; i < split.length; i++){;
@@ -68,9 +75,6 @@ public class KenLMSubsConnector implements SubstituteBuilder {
 	}
 	
 	private String buildSubstituteVector(String[] words, int targetPosition) throws Exception{
-
-		
-		
 		List<Substitute> subsList = new ArrayList<>();
 		for(String sub : fd.getMostFrequentSamples(1000)){
 	
@@ -107,15 +111,4 @@ public class KenLMSubsConnector implements SubstituteBuilder {
 		return sentence;
 	}
 	
-	private void buildFD(CollectionReaderDescription reader, AnalysisEngineDescription preprocessing) throws Exception{
-		AnalysisEngine engine = AnalysisEngineFactory.createEngine(preprocessing);
-		fd = new FrequencyDistribution<>();
-		for (JCas jcas : new JCasIterable(reader)) {
-			engine.process(jcas);
-			for (Token token : JCasUtil.select(jcas, Token.class)) {
-				fd.inc(token.getCoveredText());
-			}
-		}
-		System.out.println("---Built fd---");
-	}
 }

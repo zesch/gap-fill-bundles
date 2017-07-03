@@ -1,7 +1,8 @@
-package de.unidue.ltl.gapfill.util;
+package de.unidue.ltl.gapfill.subsbuilder;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import org.apache.uima.jcas.JCas;
 
 import de.tudarmstadt.ukp.dkpro.core.api.frequency.util.FrequencyDistribution;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
+import de.unidue.ltl.gapfill.util.Substitute;
 
 public class BaselineSubstituteBuilder implements SubstituteBuilder {
 	
@@ -27,9 +29,10 @@ public class BaselineSubstituteBuilder implements SubstituteBuilder {
 	public static final String WORDS_FILE_NAME = "words.txt";
 	public static final String DOCS_FILE_NAME = "docs.txt";
 	public static final String SUBS_FILE_NAME = "subs.txt";
+	public static final String EXIT_TOKEN = "EXIT_TOKEN";
 	
-	private Path inputFile;
-	private Path outputFile;
+	private Path docsFile;
+	private Path subsFile;
 	private FrequencyDistribution<String> fd;
 	private int nrOfSubs;
 	private boolean weightedProbabilities;
@@ -39,24 +42,21 @@ public class BaselineSubstituteBuilder implements SubstituteBuilder {
 
 	public BaselineSubstituteBuilder(Path indexPath,
 			int nrOfSubs, 
-			CollectionReaderDescription reader, 
-			AnalysisEngineDescription preprocessing, 
 			boolean weightedProbabilities){
-		this.inputFile = indexPath.resolve(DOCS_FILE_NAME);
-		this.outputFile = indexPath.resolve(SUBS_FILE_NAME);
+		this.docsFile = indexPath.resolve(DOCS_FILE_NAME);
+		this.subsFile = indexPath.resolve(SUBS_FILE_NAME);
 		this.weightedProbabilities = weightedProbabilities;
 		this.nrOfSubs = nrOfSubs;
-		try{
-			buildFD(reader, preprocessing);
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
+		buildFD();
 	}
 
 	@Override
 	public void buildSubstitutes() throws Exception {
-		BufferedReader br = Files.newBufferedReader(inputFile);
-		BufferedWriter bw = Files.newBufferedWriter(outputFile);
+		if(subsFile.toFile().delete())
+			subsFile.toFile().createNewFile();
+		
+		BufferedReader br = Files.newBufferedReader(docsFile);
+		BufferedWriter bw = Files.newBufferedWriter(subsFile);
 		String inputline;
 		while((inputline = br.readLine())!=null){
 			if(inputline.equals("EXIT_TOKEN"))
@@ -113,14 +113,20 @@ public class BaselineSubstituteBuilder implements SubstituteBuilder {
 		return sb.toString();
 	}
 	
-	private void buildFD(CollectionReaderDescription reader, AnalysisEngineDescription preprocessing) throws Exception{
-		AnalysisEngine engine = AnalysisEngineFactory.createEngine(preprocessing);
+	private void buildFD() {
 		fd = new FrequencyDistribution<>();
-		for (JCas jcas : new JCasIterable(reader)) {
-			engine.process(jcas);
-			for (Token token : JCasUtil.select(jcas, Token.class)) {
-				fd.inc(token.getCoveredText());
+		try(BufferedReader br = Files.newBufferedReader(docsFile);){
+			String line;
+			while((line = br.readLine())!=null){
+				if(line.equals(EXIT_TOKEN))
+					break;
+				String[] words = line.split(" ");
+				for(String word : words){
+					fd.inc(word);
+				}
 			}
+		} catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 

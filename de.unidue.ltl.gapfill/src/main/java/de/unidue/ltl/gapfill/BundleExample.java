@@ -12,10 +12,10 @@ import org.apache.uima.fit.factory.CollectionReaderFactory;
 import de.unidue.ltl.gapfill.indexer.CorpusIndexer;
 import de.unidue.ltl.gapfill.io.GUMReader;
 import de.unidue.ltl.gapfill.lookup.SubstituteLookup;
-import de.unidue.ltl.gapfill.util.BaselineSubstituteBuilder;
-import de.unidue.ltl.gapfill.util.FastSubsConnector;
-import de.unidue.ltl.gapfill.util.KenLMSubsConnector;
-import de.unidue.ltl.gapfill.util.SubstituteBuilder;
+import de.unidue.ltl.gapfill.subsbuilder.BaselineSubstituteBuilder;
+import de.unidue.ltl.gapfill.subsbuilder.FastSubsConnector;
+import de.unidue.ltl.gapfill.subsbuilder.JWeb1TSubsBuilder;
+import de.unidue.ltl.gapfill.subsbuilder.SubstituteBuilder;
 import de.unidue.ltl.gapfill.util.SubstituteVector;
 
 public class BundleExample {
@@ -35,16 +35,18 @@ public class BundleExample {
 		Path indexPath = Paths.get("target/index");
 
 		
-		BaselineSubstituteBuilder subsBuilder = new BaselineSubstituteBuilder(indexPath, 100, reader, preprocessing,false);
+		//BaselineSubstituteBuilder subsBuilder = new BaselineSubstituteBuilder(indexPath, 100, true);
 		//FastSubsConnector subsBuilder = new FastSubsConnector(indexPath, lmPath, 100);
-		CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing, subsBuilder , 100);
-		indexer.index();
-		indexer.buildSubstitutes();
+		//CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing,100);
+		//indexer.index();
+		JWeb1TSubsBuilder s = new JWeb1TSubsBuilder(indexPath, 100);
 		
 		
-
-		//SubstituteLookup sl = new SubstituteLookup(indexPath, 100);
-		//sl.getBundle(8, "take", "VV");
+		
+		//BaselineSubstituteBuilder subsBuilder = new BaselineSubstituteBuilder(indexPath, 100, true);
+		//subsBuilder.buildSubstitutes();
+//		SubstituteLookup sl = new SubstituteLookup(indexPath, 100);
+//		sl.getBundle(4, "find", "VV");
 		
 	}
 }

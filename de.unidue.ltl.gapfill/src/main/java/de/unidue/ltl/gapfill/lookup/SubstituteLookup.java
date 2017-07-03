@@ -12,7 +12,7 @@ import java.util.List;
 import org.apache.commons.io.*;
 
 import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
-import de.unidue.ltl.gapfill.util.FastSubsConnector;
+import de.unidue.ltl.gapfill.subsbuilder.FastSubsConnector;
 import de.unidue.ltl.gapfill.util.SubstituteVector;
 import de.unidue.ltl.gapfill.util.SubstituteVectorUtil; 
 

@@ -23,9 +23,9 @@ import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
 import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.V;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
-import de.unidue.ltl.gapfill.util.BaselineSubstituteBuilder;
-import de.unidue.ltl.gapfill.util.FastSubsConnector;
-import de.unidue.ltl.gapfill.util.SubstituteBuilder;
+import de.unidue.ltl.gapfill.subsbuilder.BaselineSubstituteBuilder;
+import de.unidue.ltl.gapfill.subsbuilder.FastSubsConnector;
+import de.unidue.ltl.gapfill.subsbuilder.SubstituteBuilder;
 
 public class CorpusIndexer {
 
@@ -47,21 +47,17 @@ public class CorpusIndexer {
 	private Path subsFile;
 	private Path wordsFile;
 	private Path sentenceFile;
-
-	private SubstituteBuilder substituteBuilder;
 	
 	private ConditionalFrequencyDistribution<String, String> word2sentence;
 	
 	public CorpusIndexer(Path indexPath, 
 			CollectionReaderDescription reader, 
 			AnalysisEngineDescription preprocessing,
-			SubstituteBuilder substituteBuilder,
 			int maxSubs) 
 		throws Exception
 	{
 		this.reader = reader;
 		this.preprocessing = preprocessing;
-		this.substituteBuilder = substituteBuilder;
 		
 		if (Files.notExists(indexPath)) {
 			Files.createDirectories(indexPath);			
@@ -76,7 +72,6 @@ public class CorpusIndexer {
 	    
 	    this.word2sentence = new ConditionalFrequencyDistribution<>();
 
-		Path lmPath = Paths.get("src/test/resources/lm/brown.lm");
 	}
 	
 	public void index()
@@ -117,25 +112,23 @@ public class CorpusIndexer {
 		System.out.println();
 		System.out.println("Indexed " + sentenceId + " sentences.");		
 	}
-	
-	public void buildSubstitutes() throws Exception{
-		if(subsFile.toFile().delete())
-			subsFile.toFile().createNewFile();
-		substituteBuilder.buildSubstitutes();
-		System.out.println("Substitutes build.");
-	}
 		
 	private void indexSentence(JCas jcas, Sentence sentence, Integer sentenceId)
 		throws IOException
 	{
-		sentenceWriter.write(sentenceId.toString());
+		//sentenceWriter.write(sentenceId.toString());
+		boolean addTab = false;
 		int tokenPosition = 0;
 		for (Token token : JCasUtil.selectCovered(jcas, Token.class, sentence)) {
 			
 			docsWriter.write(token.getCoveredText());
 			docsWriter.write(" ");
 			
-			sentenceWriter.write(TAB);
+			if(addTab){
+				sentenceWriter.write(TAB);
+			} else {
+				addTab = true;
+			}
 			sentenceWriter.write(token.getCoveredText());
 			
 			POS pos = token.getPos();

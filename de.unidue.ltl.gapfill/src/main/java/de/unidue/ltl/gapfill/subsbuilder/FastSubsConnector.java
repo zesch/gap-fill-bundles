@@ -1,4 +1,4 @@
-package de.unidue.ltl.gapfill.util;
+package de.unidue.ltl.gapfill.subsbuilder;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -17,6 +17,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 
 import de.tudarmstadt.ukp.dkpro.core.api.resources.RuntimeProvider;
+import de.unidue.ltl.gapfill.util.SubstituteVector;
 
 /**
  * Wrapper for the FASTSUBS library.

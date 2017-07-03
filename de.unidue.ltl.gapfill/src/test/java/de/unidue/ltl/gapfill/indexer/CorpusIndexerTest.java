@@ -11,7 +11,7 @@ import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.junit.Test;
 
 import de.unidue.ltl.gapfill.io.GUMReader;
-import de.unidue.ltl.gapfill.util.FastSubsConnector;
+import de.unidue.ltl.gapfill.subsbuilder.FastSubsConnector;
 
 public class CorpusIndexerTest {
 
@@ -28,9 +28,7 @@ public class CorpusIndexerTest {
 		);
 		
 		AnalysisEngineDescription preprocessing = AnalysisEngineFactory.createEngineDescription(NoOpAnnotator.class);
-		Path lmPath = Paths.get("src/test/resources/lm/brown.lm");
-		FastSubsConnector fsc = new FastSubsConnector(Paths.get("target/index"), lmPath, 10);
-		CorpusIndexer indexer = new CorpusIndexer(Paths.get("target/index"), reader, preprocessing, fsc,10);
+		CorpusIndexer indexer = new CorpusIndexer(Paths.get("target/index"), reader, preprocessing,10);
 		indexer.index();
 	}
 }
