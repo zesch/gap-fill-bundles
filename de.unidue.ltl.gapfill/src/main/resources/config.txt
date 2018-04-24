@@ -1,0 +1,3 @@
+model=src/main/resources/gerModel.arpa
+folder=src/main/resources/corpora/HamburgDepTreebank
+index=target

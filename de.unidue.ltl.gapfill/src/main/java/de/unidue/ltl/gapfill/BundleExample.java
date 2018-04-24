@@ -14,6 +14,7 @@ import org.apache.uima.fit.factory.CollectionReaderFactory;
 
 import de.unidue.ltl.gapfill.indexer.CorpusIndexer;
 import de.unidue.ltl.gapfill.io.LineTokenTagReader;
+import de.unidue.ltl.gapfill.lookup.SubstituteLookup;
 import de.unidue.ltl.gapfill.subsbuilder.FastSubsConnector;
 import de.unidue.ltl.gapfill.util.SubstituteVector;
 
@@ -51,16 +52,17 @@ public class BundleExample {
 //		JWeb1TSubsBuilder s = new JWeb1TSubsBuilder(indexPath, 100);
 		subsBuilder.buildSubstitutes();
 		List<SubstituteVector> substitutes = subsBuilder.getSubstitutes("Hallo , heute ist das Wetter besonders gut ");
-		for(SubstituteVector v : substitutes) {
-		    System.out.println(v);
-		    System.out.println();
-		}
+		
+      SubstituteLookup sl = new SubstituteLookup(indexPath, 100);
+      List<SubstituteVector> bundle = sl.getBundle(4, "bevorstehend", "ADJA");
+      for(SubstituteVector s : bundle) {
+          System.out.println(s);
+      }
 		
 		
 		//BaselineSubstituteBuilder subsBuilder = new BaselineSubstituteBuilder(indexPath, 100, true);
 		//subsBuilder.buildSubstitutes();
-//		SubstituteLookup sl = new SubstituteLookup(indexPath, 100);
-//		sl.getBundle(4, "find", "VV");
+
 		
 	}
 }
