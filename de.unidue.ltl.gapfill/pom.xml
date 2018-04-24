@@ -26,6 +26,11 @@
   			de.tudarmstadt.ukp.dkpro.core.tokit-asl
   		</artifactId>
   	</dependency>
+  	    <dependency>
+      <groupId>com.github.aiku</groupId>
+      <artifactId>com.github.aiku.fastsubs-bin</artifactId>
+      <version>20150415.1</version>
+    </dependency>
   	<dependency>
   		<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
   		<artifactId>

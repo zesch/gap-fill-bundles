@@ -10,13 +10,8 @@ import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 
 import de.unidue.ltl.gapfill.indexer.CorpusIndexer;
-import de.unidue.ltl.gapfill.io.GUMReader;
-import de.unidue.ltl.gapfill.lookup.SubstituteLookup;
-import de.unidue.ltl.gapfill.subsbuilder.BaselineSubstituteBuilder;
+import de.unidue.ltl.gapfill.io.LineTokenTagReader;
 import de.unidue.ltl.gapfill.subsbuilder.FastSubsConnector;
-import de.unidue.ltl.gapfill.subsbuilder.JWeb1TSubsBuilder;
-import de.unidue.ltl.gapfill.subsbuilder.SubstituteBuilder;
-import de.unidue.ltl.gapfill.util.SubstituteVector;
 
 public class BundleExample {
 	
@@ -24,23 +19,25 @@ public class BundleExample {
 		throws Exception
 	{
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(
-				GUMReader.class,
-				GUMReader.PARAM_SOURCE_LOCATION, "src/main/resources/corpora/GUM",
-				GUMReader.PARAM_PATTERNS, "GUM_interview_ants.xml",
-				GUMReader.PARAM_LANGUAGE, "en"
+				LineTokenTagReader.class,
+				LineTokenTagReader.PARAM_SOURCE_LOCATION, "src/main/resources/corpora/HamburgDepTreebank",
+				LineTokenTagReader.PARAM_PATTERNS, "*.txt",
+				LineTokenTagReader.PARAM_LANGUAGE, "de"
 		);
 		
 		AnalysisEngineDescription preprocessing = AnalysisEngineFactory.createEngineDescription(NoOpAnnotator.class);
-		Path lmPath = Paths.get("src/test/resources/lm/brown.lm");
+		Path lmPath = Paths.get("src/main/resources/gerModel.arpa");
 		Path indexPath = Paths.get("target/index");
 
+	    CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing,100);
+        indexer.index();
 		
 		//BaselineSubstituteBuilder subsBuilder = new BaselineSubstituteBuilder(indexPath, 100, true);
-		//FastSubsConnector subsBuilder = new FastSubsConnector(indexPath, lmPath, 100);
-		//CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing,100);
-		//indexer.index();
-		JWeb1TSubsBuilder s = new JWeb1TSubsBuilder(indexPath, 100);
-		
+		FastSubsConnector subsBuilder = new FastSubsConnector(indexPath, lmPath, 100);
+
+//		JWeb1TSubsBuilder s = new JWeb1TSubsBuilder(indexPath, 100);
+		subsBuilder.buildSubstitutes();
+		subsBuilder.getSubstitutes("Hallo du da");
 		
 		
 		//BaselineSubstituteBuilder subsBuilder = new BaselineSubstituteBuilder(indexPath, 100, true);

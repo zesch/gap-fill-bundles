@@ -120,7 +120,7 @@ public class FastSubsConnector implements SubstituteBuilder {
     		throws IOException
     {
         if (runtimeProvider == null) {            
-            runtimeProvider = new RuntimeProvider("classpath:/de/unidue/ltl/fastsubs/");
+            runtimeProvider = new RuntimeProvider("classpath:/com/github/aiku/fastsubs/");
         }
 
         String executablePath = runtimeProvider.getFile("fastsubs").getAbsolutePath();
