@@ -1,7 +1,10 @@
 package de.unidue.ltl.gapfill;
 
+import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Properties;
 
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.collection.CollectionReaderDescription;
@@ -12,22 +15,32 @@ import org.apache.uima.fit.factory.CollectionReaderFactory;
 import de.unidue.ltl.gapfill.indexer.CorpusIndexer;
 import de.unidue.ltl.gapfill.io.LineTokenTagReader;
 import de.unidue.ltl.gapfill.subsbuilder.FastSubsConnector;
+import de.unidue.ltl.gapfill.util.SubstituteVector;
 
 public class BundleExample {
 	
 	public static void main(String[] args)
 		throws Exception
 	{
+	    Properties p = new Properties();
+        FileInputStream f = new FileInputStream("src/main/resources/config.txt");
+        p.load(f);
+        f.close();
+        
+        String sourceFolder = p.getProperty("folder");
+        String model = p.getProperty("model");
+        String indexLocation = p.getProperty("index");
+	    
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(
 				LineTokenTagReader.class,
-				LineTokenTagReader.PARAM_SOURCE_LOCATION, "src/main/resources/corpora/HamburgDepTreebank",
+				LineTokenTagReader.PARAM_SOURCE_LOCATION, sourceFolder,
 				LineTokenTagReader.PARAM_PATTERNS, "*.txt",
 				LineTokenTagReader.PARAM_LANGUAGE, "de"
 		);
 		
 		AnalysisEngineDescription preprocessing = AnalysisEngineFactory.createEngineDescription(NoOpAnnotator.class);
-		Path lmPath = Paths.get("src/main/resources/gerModel.arpa");
-		Path indexPath = Paths.get("target/index");
+		Path lmPath = Paths.get(model);
+		Path indexPath = Paths.get(indexLocation);
 
 	    CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing,100);
         indexer.index();
@@ -37,7 +50,11 @@ public class BundleExample {
 
 //		JWeb1TSubsBuilder s = new JWeb1TSubsBuilder(indexPath, 100);
 		subsBuilder.buildSubstitutes();
-		subsBuilder.getSubstitutes("Hallo du da");
+		List<SubstituteVector> substitutes = subsBuilder.getSubstitutes("Hallo , heute ist das Wetter besonders gut ");
+		for(SubstituteVector v : substitutes) {
+		    System.out.println(v);
+		    System.out.println();
+		}
 		
 		
 		//BaselineSubstituteBuilder subsBuilder = new BaselineSubstituteBuilder(indexPath, 100, true);

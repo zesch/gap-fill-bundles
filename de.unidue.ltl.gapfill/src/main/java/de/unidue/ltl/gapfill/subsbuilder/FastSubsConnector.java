@@ -119,7 +119,8 @@ public class FastSubsConnector implements SubstituteBuilder {
     private String getExecutablePath()
     		throws IOException
     {
-        if (runtimeProvider == null) {            
+        if (runtimeProvider == null) {        
+            //hey, if the app crashes here ... did you run the ant script? Only OSX/Linux 64 bit supported.
             runtimeProvider = new RuntimeProvider("classpath:/com/github/aiku/fastsubs/");
         }
 
