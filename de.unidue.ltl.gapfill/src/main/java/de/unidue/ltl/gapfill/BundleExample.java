@@ -22,7 +22,7 @@ import de.unidue.ltl.gapfill.util.SubstituteVector;
 
 public class BundleExample
 {
-    static int LIMIT=25;
+    static int LIMIT = 25;
 
     public static void main(String[] args) throws Exception
     {
@@ -30,9 +30,11 @@ public class BundleExample
         FileInputStream f = new FileInputStream(args[0]);
         p.load(f);
         f.close();
-        
+
         String word = args[1];
         String pos = args[2];
+
+        System.out.println(word + " " + pos);
 
         String sourceFolder = p.getProperty("folder");
         String model = p.getProperty("model");
@@ -53,16 +55,19 @@ public class BundleExample
         indexer.index();
 
         System.out.println("Calling FastSubs to build substitutes---");
-         FastSubsConnector subsBuilder = new FastSubsConnector(indexPath, lmPath, LIMIT);
-         subsBuilder.buildSubstitutes();
-         System.out.println("--- done");
+        FastSubsConnector subsBuilder = new FastSubsConnector(indexPath, lmPath, LIMIT);
+        subsBuilder.buildSubstitutes();
+        System.out.println("--- done");
 
         System.out.println("Creating bundles ---");
         SubstituteLookup sl = new SubstituteLookup(indexPath, LIMIT);
         List<SubstituteVector> bundle = sl.getBundle(4, word, pos);
+        System.out.println("Size of the bundle: " + bundle.size());
         StringBuilder sb = new StringBuilder();
         for (SubstituteVector s : bundle) {
-            sb.append(s.toString()+"\n");
+            sb.append(s.getSentenceWithGap() + "\n");
+            sb.append(s.getSubstitutes() + "\n");
+            sb.append("\n");
             System.out.println(s);
         }
         FileUtils.writeStringToFile(new File(outputFolder, "bundleResult.txt"), sb.toString());

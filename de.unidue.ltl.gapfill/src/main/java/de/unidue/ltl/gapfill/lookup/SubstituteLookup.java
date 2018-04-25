@@ -49,8 +49,7 @@ public class SubstituteLookup {
 	
 
 	private String getSentence(int sentenceId) throws IOException{
-		String[] sentence = sentences.get(sentenceId).split(TAB, 2);
-		return sentence[1];
+		return sentences.get(sentenceId);
 	}
 	
 	public List<SubstituteVector> getBundle(int size, String token, String pos) throws Exception{
