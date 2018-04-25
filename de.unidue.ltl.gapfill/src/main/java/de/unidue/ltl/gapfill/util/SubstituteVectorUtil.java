@@ -1,6 +1,7 @@
 package de.unidue.ltl.gapfill.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SubstituteVectorUtil {
@@ -8,7 +9,7 @@ public class SubstituteVectorUtil {
 	
 	public static List<SubstituteVector> getBundle(List<SubstituteVector> substituteVectors, int size){
 		if(substituteVectors.size() == 0)
-			return null;
+			return Collections.emptyList();
 		
 		SubstituteVector best = substituteVectors.get(0);
 		double maxD = - Double.MAX_VALUE;

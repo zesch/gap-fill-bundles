@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.*;
@@ -76,8 +77,9 @@ public class SubstituteLookup {
 				break;
 		}
 		
-		if(line == null)
-			return null;
+		if(line == null) {
+			return Collections.emptyList();
+		}
 		
 		String[] split = line.split(TAB);
 		for(int i = 1; i < split.length; i++){
