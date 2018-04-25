@@ -1,8 +1,6 @@
 package de.unidue.ltl.gapfill.lookup;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,9 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.io.*;
+import org.apache.commons.io.FileUtils;
 
-import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
 import de.unidue.ltl.gapfill.subsbuilder.FastSubsConnector;
 import de.unidue.ltl.gapfill.util.SubstituteVector;
 import de.unidue.ltl.gapfill.util.SubstituteVectorUtil; 
