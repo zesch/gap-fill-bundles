@@ -1,11 +1,13 @@
 package de.unidue.ltl.gapfill;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.collection.CollectionReaderDescription;
 import org.apache.uima.fit.component.NoOpAnnotator;
@@ -35,6 +37,7 @@ public class BundleExample
         String sourceFolder = p.getProperty("folder");
         String model = p.getProperty("model");
         String indexLocation = p.getProperty("index");
+        String outputFolder = p.getProperty("output");
 
         CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(
                 LineTokenTagReader.class, LineTokenTagReader.PARAM_SOURCE_LOCATION, sourceFolder,
@@ -54,12 +57,15 @@ public class BundleExample
          subsBuilder.buildSubstitutes();
          System.out.println("--- done");
 
-        System.out.println("Creating bundle ---");
+        System.out.println("Creating bundles ---");
         SubstituteLookup sl = new SubstituteLookup(indexPath, LIMIT);
         List<SubstituteVector> bundle = sl.getBundle(4, word, pos);
+        StringBuilder sb = new StringBuilder();
         for (SubstituteVector s : bundle) {
+            sb.append(s.toString()+"\n");
             System.out.println(s);
         }
+        FileUtils.writeStringToFile(new File(outputFolder, "bundleResult.txt"), sb.toString());
         System.out.println("--- done");
 
     }
