@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import org.apache.uima.analysis_engine.AnalysisEngine;
@@ -20,12 +19,9 @@ import de.tudarmstadt.ukp.dkpro.core.api.frequency.util.ConditionalFrequencyDist
 import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.ADJ;
 import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.N;
 import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
-import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.V;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
-import de.unidue.ltl.gapfill.subsbuilder.BaselineSubstituteBuilder;
 import de.unidue.ltl.gapfill.subsbuilder.FastSubsConnector;
-import de.unidue.ltl.gapfill.subsbuilder.SubstituteBuilder;
 
 public class CorpusIndexer {
 
@@ -44,7 +40,6 @@ public class CorpusIndexer {
 	private BufferedWriter docsWriter;
 	
 	private Path docsFile;
-	private Path subsFile;
 	private Path wordsFile;
 	private Path sentenceFile;
 	
@@ -64,7 +59,6 @@ public class CorpusIndexer {
 		}
 		
 		this.docsFile = indexPath.resolve(DOCS_FILE_NAME);
-		this.subsFile = indexPath.resolve(SUBS_FILE_NAME);
 		this.wordsFile = indexPath.resolve(WORDS_FILE_NAME);
 		this.sentenceFile = indexPath.resolve(SENTENCE_FILE_NAME);
 		

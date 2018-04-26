@@ -1,6 +1,6 @@
 package de.unidue.ltl.gapfill.util;
 
-public class Substitute implements Comparable {
+public class Substitute implements Comparable<Substitute> {
 	
 	private String name;
 	private double value;
@@ -27,8 +27,7 @@ public class Substitute implements Comparable {
 	}
 
 	@Override
-	public int compareTo(Object obj) {
-		Substitute other = (Substitute) obj;
+	public int compareTo(Substitute other) {
 		if(other.getValue() > value)
 			return -1;
 		if(other.getValue() < value)
