@@ -81,7 +81,7 @@ public class BundleExample
                 sb.append("\n");
             }
             FileUtils.writeStringToFile(
-                    new File(outputFolder, word + "_" + pos + "_" + "bundleResult.txt"),
+                    new File(outputFolder, pos + "_" + word + "_" + "bundleResult.txt"),
                     sb.toString());
             System.out.println("--- done");
 
