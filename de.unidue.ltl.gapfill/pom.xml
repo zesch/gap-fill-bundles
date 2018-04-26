@@ -109,13 +109,13 @@
   		</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.github.aiku</groupId>
-			<artifactId>com.github.aiku.fastsubs-bin</artifactId>
+			<groupId>com.github.horsmann</groupId>
+			<artifactId>com.github.horsmann.fastsubs-bin</artifactId>
 			<version>20150415.1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.github.aiku</groupId>
-			<artifactId>com.github.aiku.fastsubs-omp-bin</artifactId>
+			<groupId>com.github.horsmann</groupId>
+			<artifactId>com.github.horsmann.fastsubs-omp-bin</artifactId>
 			<version>20150415.1</version>
 		</dependency>
 		<dependency>
@@ -139,7 +139,6 @@
 		<dependency>
 			<groupId>com.googlecode.jweb1t</groupId>
 			<artifactId>com.googlecode.jweb1t</artifactId>
-			<version>1.3.0</version>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
