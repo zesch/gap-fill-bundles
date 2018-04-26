@@ -2,6 +2,7 @@ package de.unidue.ltl.gapfill;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -33,7 +34,7 @@ public class BundleExample
 
         for (int i = 1; i < args.length; i += 2) {
             String word = args[i];
-            String pos = args[i+1];
+            String pos = args[i + 1];
 
             System.out.println(word + " " + pos);
 
@@ -47,18 +48,27 @@ public class BundleExample
                     sourceFolder, LineTokenTagReader.PARAM_PATTERNS, "*.txt",
                     LineTokenTagReader.PARAM_LANGUAGE, "de");
 
-            AnalysisEngineDescription preprocessing = AnalysisEngineFactory
-                    .createEngineDescription(NoOpAnnotator.class);
-            Path lmPath = Paths.get(model);
             Path indexPath = Paths.get(indexLocation);
 
-            CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing, LIMIT);
-            indexer.index();
+            if (rebuildIndex(indexLocation, sourceFolder)) {
+                System.out.println("Building index information");
 
-            System.out.println("Retrieving substitutes ---");
-            FastSubsConnector subsBuilder = new FastSubsConnector(indexPath, lmPath, LIMIT);
-            subsBuilder.buildSubstitutes();
-            System.out.println("--- done");
+                AnalysisEngineDescription preprocessing = AnalysisEngineFactory
+                        .createEngineDescription(NoOpAnnotator.class);
+                Path lmPath = Paths.get(model);
+
+                CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing, LIMIT);
+                indexer.index();
+
+                System.out.println("Retrieving substitutes ---");
+                FastSubsConnector subsBuilder = new FastSubsConnector(indexPath, lmPath, LIMIT);
+                subsBuilder.buildSubstitutes();
+                System.out.println("--- done");
+            }
+            else {
+                System.out.println(
+                        "Use existing index from previous runs at [" + indexLocation + "]");
+            }
 
             System.out.println("Creating bundles ---");
             SubstituteLookup sl = new SubstituteLookup(indexPath, LIMIT);
@@ -75,5 +85,42 @@ public class BundleExample
             System.out.println("--- done");
 
         }
+    }
+
+    private static boolean rebuildIndex(String index, String source) throws Exception
+    {
+        File file = new File(index + "/id.txt");
+        if (!file.exists()) {
+            writeIdFile(file, source);
+            return true;
+        }
+
+        Properties p = new Properties();
+        FileInputStream f = new FileInputStream(file.getAbsolutePath());
+        p.load(f);
+        f.close();
+
+        String property = p.getProperty("source");
+        if (property == null) {
+            writeIdFile(file, source);
+            return true;
+        }
+
+        if (!property.equals(source)) {
+            writeIdFile(file, source);
+            return true;
+        }
+
+        return false;
+    }
+
+    private static void writeIdFile(File file, String source) throws Exception
+    {
+        Properties p = new Properties();
+        FileOutputStream fos = new FileOutputStream(file.getAbsolutePath());
+        p.setProperty("source", source);
+        p.store(fos,
+                "The path of the source corpus is used to decide if the index has to be rebuild - if the path stays the same the existing index is found if any is provided otherwise the index is (re)build");
+        fos.close();
     }
 }
