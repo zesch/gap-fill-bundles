@@ -8,17 +8,18 @@ public class SubstituteVectorUtil {
 	
 	
 	public static List<SubstituteVector> getBundle(List<SubstituteVector> substituteVectors, int size){
-		if(substituteVectors.size() == 0)
+		if(substituteVectors.size() == 0) {
 			return Collections.emptyList();
+		}
 		
 		SubstituteVector best = substituteVectors.get(0);
-		double maxD = - Double.MAX_VALUE;
+		double maxDisambiguity = - Double.MAX_VALUE;
 		
 		for(SubstituteVector substituteVector : substituteVectors){
-			double D = getD(substituteVector);
-			if (D > maxD) {
+			double disambiguity = getDisambiguity(substituteVector);
+			if (disambiguity > maxDisambiguity) {
 				best = substituteVector;
-				maxD = D;
+				maxDisambiguity = disambiguity;
 			}
 		}
 		
@@ -44,6 +45,7 @@ public class SubstituteVectorUtil {
 		
 		SubstituteVector combinedVector = bundleVector;
 		
+        System.out.println("..greedy search over [" + size + "] vectors");
 		while(currentSize < size){
 
 			SubstituteVector[] subsArr = new SubstituteVector[targetVectors.size()];
@@ -66,6 +68,7 @@ public class SubstituteVectorUtil {
 		}
 		
 		SubstituteVector result = vectors[0];
+        System.out.println("...combining [" + vectors.length + "] vectors");
 		for (int i=1; i<vectors.length; i++) {
 			result = getCombinedVector(result, vectors[1]);
 		}
@@ -96,7 +99,7 @@ public class SubstituteVectorUtil {
 		
 		for (SubstituteVector targetVector : targetVectors) {
 			SubstituteVector combinedVector = SubstituteVectorUtil.getCombinedVector(bundleVector, targetVector);
-			double D = getD(combinedVector);
+			double D = getDisambiguity(combinedVector);
 			if (D > maxD) {
 				result = targetVector;
 				maxD = D;
@@ -110,7 +113,7 @@ public class SubstituteVectorUtil {
 	 * @param sv
 	 * @return The disambiguation measure D given a SubstituteVector
 	 */
-	public static double getD(SubstituteVector sv) {		
+	public static double getDisambiguity(SubstituteVector sv) {		
 		double targetWeight = sv.getSubstituteWeight(sv.getToken());
 		
 		// vector was reduced to only target

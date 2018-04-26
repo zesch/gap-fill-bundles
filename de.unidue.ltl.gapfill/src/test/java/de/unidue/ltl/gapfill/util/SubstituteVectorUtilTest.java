@@ -61,10 +61,10 @@ public class SubstituteVectorUtilTest {
 	
 	@Test
 	public void testDisambiguationMeasure() {
-		assertEquals(0.0, SubstituteVectorUtil.getD(sv1), 0.01);
-		assertEquals(-0.2, SubstituteVectorUtil.getD(sv2), 0.01);
-		assertEquals(0.9, SubstituteVectorUtil.getD(sv3), 0.01);
-		assertEquals(-2.1, SubstituteVectorUtil.getD(sv4), 0.01);
+		assertEquals(0.0, SubstituteVectorUtil.getDisambiguity(sv1), 0.01);
+		assertEquals(-0.2, SubstituteVectorUtil.getDisambiguity(sv2), 0.01);
+		assertEquals(0.9, SubstituteVectorUtil.getDisambiguity(sv3), 0.01);
+		assertEquals(-2.1, SubstituteVectorUtil.getDisambiguity(sv4), 0.01);
 	}
 	
 	@Test
