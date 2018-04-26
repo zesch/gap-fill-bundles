@@ -23,7 +23,7 @@
 	<!-- 
 	  - Output package configuration
 	  -->
-	<property name="outputPackage" value="com/github/aiku/fastsubs"/>
+	<property name="outputPackage" value="com/github/horsmann/fastsubs"/>
 
 	<target name="local-maven">
 		<property name="install-artifact-mode" value="local"/>
@@ -43,7 +43,7 @@
 		<mkdir dir="target/download"/>
 
 		<!-- OSX -->
-		<mkdir dir="target/model-staging/com/github/aiku/fastsubs/osx-x86_64"/>
+		<mkdir dir="target/model-staging/com/github/horsmann/fastsubs/osx-x86_64"/>
 
 		<get 
 	    		src="https://bintray.com/inofficalbinarystore/generic/download_file?file_path=fastsubs.osx-x86_64.tar.gz" 
@@ -54,24 +54,24 @@
 				dest="target/download/fastsubs.osx-x86_64.tar"/>
 		<untar 
 				src="target/download/fastsubs.osx-x86_64.tar"
-				dest="target/model-staging/com/github/aiku/fastsubs/osx-x86_64">
+				dest="target/model-staging/com/github/horsmann/fastsubs/osx-x86_64">
 			<patternset>
 				<include name="*" />
 			</patternset>
 			<mapper type="flatten" />
 		</untar>
 
-		<echo file="target/model-staging/com/github/aiku/fastsubs/osx-x86_64/README">
+		<echo file="target/model-staging/com/github/horsmann/fastsubs/osx-x86_64/README">
 			fastsubs Github.com hash id 31de2e7b589a56601e2adbbf8fbf6cc88965ece8
 		</echo>
 
 		<propertyfile
-		    file="target/model-staging/com/github/aiku/fastsubs/osx-x86_64/manifest.properties">
+		    file="target/model-staging/com/github/horsmann/fastsubs/osx-x86_64/manifest.properties">
 			<entry  key="fastsubs" value="executable"/>
 		</propertyfile>
 
 		<!-- Linux 64 -->
-			<mkdir dir="target/model-staging/com/github/aiku/fastsubs/linux-x86_64"/>
+			<mkdir dir="target/model-staging/com/github/horsmann/fastsubs/linux-x86_64"/>
 
 			<get 
 		    		src="https://bintray.com/inofficalbinarystore/generic/download_file?file_path=fastsubs.linux-x86_64.tar.gz" 
@@ -82,24 +82,24 @@
 					dest="target/download/fastsubs.linux-x86_64.tar"/>
 			<untar 
 					src="target/download/fastsubs.linux-x86_64.tar"
-					dest="target/model-staging/com/github/aiku/fastsubs/linux-x86_64">
+					dest="target/model-staging/com/github/horsmann/fastsubs/linux-x86_64">
 				<patternset>
 					<include name="*" />
 				</patternset>
 				<mapper type="flatten" />
 			</untar>
 
-			<echo file="target/model-staging/com/github/aiku/fastsubs/linux-x86_64/README">
+			<echo file="target/model-staging/com/github/horsmann/fastsubs/linux-x86_64/README">
 				fastsubs Github.com hash id 31de2e7b589a56601e2adbbf8fbf6cc88965ece8
 			</echo>
 
 			<propertyfile
-			    file="target/model-staging/com/github/aiku/fastsubs/linux-x86_64/manifest.properties">
+			    file="target/model-staging/com/github/horsmann/fastsubs/linux-x86_64/manifest.properties">
 				<entry  key="fastsubs" value="executable"/>
 			</propertyfile>
 
 		<jar 
-			destfile="target/com.github.aiku.fastsubs-bin-${version.bin}.jar" 
+			destfile="target/com.github.horsmann.fastsubs-bin-${version.bin}.jar" 
 			compress="true">
 			<fileset dir="target/model-staging">
 				<include name="META-INF/**/*"/>
@@ -108,14 +108,14 @@
 		</jar>
 
 		<generate-pom 
-			groupId="com.github.aiku"
-			artifactId="com.github.aiku.fastsubs-bin" 
+			groupId="com.github.horsmann"
+			artifactId="com.github.horsmann.fastsubs-bin" 
 			version="${version.bin}"/>
 
 		<install-artifact 
-			file="target/com.github.aiku.fastsubs-bin-${version.bin}.jar"
-			groupId="com.github.aiku"
-			artifactId="com.github.aiku.fastsubs-bin" 
+			file="target/com.github.horsmann.fastsubs-bin-${version.bin}.jar"
+			groupId="com.github.horsmann"
+			artifactId="com.github.horsmann.fastsubs-bin" 
 			version="${version.bin}"/>
 		<clean-pom/>
 		<delete dir="target/model-staging"/>
