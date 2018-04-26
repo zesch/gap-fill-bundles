@@ -31,46 +31,49 @@ public class BundleExample
         p.load(f);
         f.close();
 
-        String word = args[1];
-        String pos = args[2];
+        for (int i = 1; i < args.length; i += 2) {
+            String word = args[i];
+            String pos = args[i+1];
 
-        System.out.println(word + " " + pos);
+            System.out.println(word + " " + pos);
 
-        String sourceFolder = p.getProperty("folder");
-        String model = p.getProperty("model");
-        String indexLocation = p.getProperty("index");
-        String outputFolder = p.getProperty("output");
+            String sourceFolder = p.getProperty("folder");
+            String model = p.getProperty("model");
+            String indexLocation = p.getProperty("index");
+            String outputFolder = p.getProperty("output");
 
-        CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(
-                LineTokenTagReader.class, LineTokenTagReader.PARAM_SOURCE_LOCATION, sourceFolder,
-                LineTokenTagReader.PARAM_PATTERNS, "*.txt", LineTokenTagReader.PARAM_LANGUAGE,
-                "de");
+            CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(
+                    LineTokenTagReader.class, LineTokenTagReader.PARAM_SOURCE_LOCATION,
+                    sourceFolder, LineTokenTagReader.PARAM_PATTERNS, "*.txt",
+                    LineTokenTagReader.PARAM_LANGUAGE, "de");
 
-        AnalysisEngineDescription preprocessing = AnalysisEngineFactory
-                .createEngineDescription(NoOpAnnotator.class);
-        Path lmPath = Paths.get(model);
-        Path indexPath = Paths.get(indexLocation);
+            AnalysisEngineDescription preprocessing = AnalysisEngineFactory
+                    .createEngineDescription(NoOpAnnotator.class);
+            Path lmPath = Paths.get(model);
+            Path indexPath = Paths.get(indexLocation);
 
-        CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing, LIMIT);
-        indexer.index();
+            CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing, LIMIT);
+            indexer.index();
 
-        System.out.println("Calling FastSubs to build substitutes---");
-        FastSubsConnector subsBuilder = new FastSubsConnector(indexPath, lmPath, LIMIT);
-        subsBuilder.buildSubstitutes();
-        System.out.println("--- done");
+            System.out.println("Retrieving substitutes ---");
+            FastSubsConnector subsBuilder = new FastSubsConnector(indexPath, lmPath, LIMIT);
+            subsBuilder.buildSubstitutes();
+            System.out.println("--- done");
 
-        System.out.println("Creating bundles ---");
-        SubstituteLookup sl = new SubstituteLookup(indexPath, LIMIT);
-        List<SubstituteVector> bundle = sl.getBundle(4, word, pos);
-        System.out.println("Size of the bundle: " + bundle.size());
-        StringBuilder sb = new StringBuilder();
-        for (SubstituteVector s : bundle) {
-            sb.append(s.getSentenceWithGap() + "\n");
-//            sb.append(s.getSubstitutes() + "\n");
-            sb.append("\n");
+            System.out.println("Creating bundles ---");
+            SubstituteLookup sl = new SubstituteLookup(indexPath, LIMIT);
+            List<SubstituteVector> bundle = sl.getBundle(4, word, pos);
+            System.out.println("Size of the bundle: " + bundle.size());
+            StringBuilder sb = new StringBuilder();
+            for (SubstituteVector s : bundle) {
+                sb.append(s.getSentenceWithGap() + "\n");
+                sb.append("\n");
+            }
+            FileUtils.writeStringToFile(
+                    new File(outputFolder, word + "_" + pos + "_" + "bundleResult.txt"),
+                    sb.toString());
+            System.out.println("--- done");
+
         }
-        FileUtils.writeStringToFile(new File(outputFolder, word + "_" + pos + "_" + "bundleResult.txt"), sb.toString());
-        System.out.println("--- done");
-
     }
 }
