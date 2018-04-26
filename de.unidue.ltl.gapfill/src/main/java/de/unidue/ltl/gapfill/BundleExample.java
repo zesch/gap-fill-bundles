@@ -51,7 +51,7 @@ public class BundleExample
 
             Path indexPath = Paths.get(indexLocation);
 
-            if (rebuildIndex(indexLocation, sourceFolder+"_maxLen" + MAX_SENT_LEN)) {
+            if (rebuildIndex(indexLocation, sourceFolder+"_maxLen_" + MAX_SENT_LEN)) {
                 System.out.println("Building index information");
 
                 AnalysisEngineDescription preprocessing = AnalysisEngineFactory
@@ -61,20 +61,23 @@ public class BundleExample
                 CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing, LIMIT, MAX_SENT_LEN);
                 indexer.index();
 
-                System.out.println("Retrieving substitutes ---");
+                System.out.println(" --- retrieving substitutes");
                 FastSubsConnector subsBuilder = new FastSubsConnector(indexPath, lmPath, LIMIT);
                 subsBuilder.buildSubstitutes();
-                System.out.println("--- done");
             }
             else {
                 System.out.println(
                         "Use existing index from previous runs at [" + indexLocation + "]");
             }
 
-            System.out.println("Creating bundles ---");
+            System.out.println(" --- creating bundles");
             SubstituteLookup sl = new SubstituteLookup(indexPath, LIMIT);
             List<SubstituteVector> bundle = sl.getBundle(4, word, pos);
-            System.out.println("Size of the bundle: " + bundle.size());
+            
+            if(bundle.isEmpty()) {
+                continue;
+            }
+            
             StringBuilder sb = new StringBuilder();
             for (SubstituteVector s : bundle) {
                 sb.append(s.getSentenceWithGap() + "\n");
@@ -83,8 +86,6 @@ public class BundleExample
             FileUtils.writeStringToFile(
                     new File(outputFolder, pos + "_" + word + "_" + "bundleResult.txt"),
                     sb.toString());
-            System.out.println("--- done");
-
         }
     }
 
