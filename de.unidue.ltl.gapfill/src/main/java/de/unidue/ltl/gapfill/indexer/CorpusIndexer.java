@@ -44,15 +44,18 @@ public class CorpusIndexer {
 	private Path sentenceFile;
 	
 	private ConditionalFrequencyDistribution<String, String> word2sentence;
+    private int maximumSenLen;
 	
 	public CorpusIndexer(Path indexPath, 
 			CollectionReaderDescription reader, 
 			AnalysisEngineDescription preprocessing,
-			int maxSubs) 
+			int maxSubs,
+			int maximumSenLen) 
 		throws Exception
 	{
 		this.reader = reader;
 		this.preprocessing = preprocessing;
+        this.maximumSenLen = maximumSenLen;
 		
 		if (Files.notExists(indexPath)) {
 			Files.createDirectories(indexPath);			
@@ -61,8 +64,6 @@ public class CorpusIndexer {
 		this.docsFile = indexPath.resolve(DOCS_FILE_NAME);
 		this.wordsFile = indexPath.resolve(WORDS_FILE_NAME);
 		this.sentenceFile = indexPath.resolve(SENTENCE_FILE_NAME);
-		
-
 	    
 	    this.word2sentence = new ConditionalFrequencyDistribution<>();
 
@@ -83,6 +84,11 @@ public class CorpusIndexer {
 			engine.process(jcas);
 			
 			for (Sentence sentence : JCasUtil.select(jcas, Sentence.class)) {
+			    
+			    if(maximumSenLen > 0 && JCasUtil.selectCovered(jcas, Token.class, sentence).size() > maximumSenLen) {
+			        continue;
+			    }
+			    
 				indexSentence(jcas, sentence, sentenceId);
 				
 				sentenceId++;

@@ -42,6 +42,7 @@ public class BundleExample
             String model = p.getProperty("model");
             String indexLocation = p.getProperty("index");
             String outputFolder = p.getProperty("output");
+            int MAX_SENT_LEN = Integer.parseInt(p.getProperty("sentLen"));
 
             CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(
                     LineTokenTagReader.class, LineTokenTagReader.PARAM_SOURCE_LOCATION,
@@ -50,14 +51,14 @@ public class BundleExample
 
             Path indexPath = Paths.get(indexLocation);
 
-            if (rebuildIndex(indexLocation, sourceFolder)) {
+            if (rebuildIndex(indexLocation, sourceFolder+"_maxLen" + MAX_SENT_LEN)) {
                 System.out.println("Building index information");
 
                 AnalysisEngineDescription preprocessing = AnalysisEngineFactory
                         .createEngineDescription(NoOpAnnotator.class);
                 Path lmPath = Paths.get(model);
 
-                CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing, LIMIT);
+                CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing, LIMIT, MAX_SENT_LEN);
                 indexer.index();
 
                 System.out.println("Retrieving substitutes ---");
