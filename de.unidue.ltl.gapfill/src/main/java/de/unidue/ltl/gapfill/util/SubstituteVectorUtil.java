@@ -56,7 +56,6 @@ public class SubstituteVectorUtil
 
         SubstituteVector combinedVector = bundleVector;
 
-        System.out.println("..greedy search over [" + size + "] vectors");
         while (currentSize < size) {
 
             SubstituteVector[] subsArr = new SubstituteVector[targetVectors.size()];
@@ -79,7 +78,6 @@ public class SubstituteVectorUtil
         }
 
         SubstituteVector result = vectors[0];
-        System.out.println("...combining [" + vectors.length + "] vectors");
         for (int i = 1; i < vectors.length; i++) {
             result = getCombinedVector(result, vectors[1]);
         }
