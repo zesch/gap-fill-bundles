@@ -2,19 +2,19 @@ package de.unidue.ltl.gapfill.subsbuilder;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.lang.ProcessBuilder.Redirect;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.uima.pear.util.FileUtil;
 
 import de.tudarmstadt.ukp.dkpro.core.api.resources.RuntimeProvider;
 import de.unidue.ltl.gapfill.util.SubstituteVector;
@@ -35,11 +35,6 @@ public class FastSubsConnector
 
     private RuntimeProvider runtimeProvider = null;
 
-    private Process process;
-
-    private BufferedWriter writer;
-    private BufferedReader reader;
-
     private int nrOfSubs;
     private Path languageModelPath;
 
@@ -53,42 +48,37 @@ public class FastSubsConnector
         this.languageModelPath = languageModelPath;
         this.nrOfSubs = nrOfSubs;
 
-        try {
-            ProcessBuilder pb = new ProcessBuilder(getExecutablePath(), getLanguageModelPath());
-            pb.redirectError(Redirect.INHERIT);
-            process = pb.start();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     public void buildSubstitutes() throws IOException, InterruptedException
     {
-        // TODO reading input file and directly processing it, does not work
-        // TODO parameter for restricting output to top n does not work
+        File tempFile = FileUtil.createTempFile("rawOut", ".txt");
 
-        List<String> command = Arrays.asList(new String[] { getExecutablePath(),
-                getLanguageModelPath(), "<", inputFile.toAbsolutePath().toString() });
+        List<String> command = Arrays.asList(new String[] { getExecutablePath(), "-n",
+                nrOfSubs + "", "-o", tempFile.getAbsolutePath(), "-i",
+                inputFile.toAbsolutePath().toString(), getLanguageModelPath() });
 
         ProcessBuilder pb = new ProcessBuilder();
-        pb.redirectError(Redirect.INHERIT);
         pb.command(command);
-        process = pb.start();
+        pb.start().waitFor();
 
-        writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream(), "UTF-8"));
-        reader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
-
-        writeInput(FileUtils.readFileToString(inputFile.toFile()) + " \n");
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(tempFile), "UTF-8"));
 
         BufferedWriter outputWriter = Files.newBufferedWriter(outputFile, StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE);
 
-        for (String line : captureProcessOutput(EXIT_TOKEN)) {
+        String l = null;
+        while ((l = reader.readLine()) != null) {
+
+            if (l.startsWith(EXIT_TOKEN)) {
+                break;
+            }
+
             int count = 0;
             StringBuilder sb = new StringBuilder();
-            for (String item : line.split("\t")) {
+            for (String item : l.split("\t")) {
                 if (count <= nrOfSubs) {
                     sb.append(item);
                     sb.append("\t");
@@ -98,25 +88,11 @@ public class FastSubsConnector
             outputWriter.write(sb.toString());
             outputWriter.newLine();
         }
+
         outputWriter.flush();
         outputWriter.close();
-
-    }
-
-    public List<SubstituteVector> getSubstitutes(String input) throws IOException
-    {
-        writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream(), "UTF-8"));
-        reader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
-
-        // write additional line that is used as an indicator when to stop capturing input
-        writeInput(input + " \n");
-
-        List<SubstituteVector> listOfSubs = new ArrayList<>();
-
-        for (String line : captureProcessOutput("</s>")) {
-            listOfSubs.add(fastsubs2vector(line, nrOfSubs));
-        }
-        return listOfSubs;
+        reader.close();
+        FileUtils.deleteQuietly(tempFile);
     }
 
     private String getExecutablePath() throws IOException
@@ -124,10 +100,10 @@ public class FastSubsConnector
         if (runtimeProvider == null) {
             // hey, if the app crashes here ... did you run the ant script? Only OSX/Linux 64 bit
             // supported.
-            runtimeProvider = new RuntimeProvider("classpath:/com/github/aiku/fastsubs/");
+            runtimeProvider = new RuntimeProvider("classpath:/com/github/horsmann/fastsubs-omp/");
         }
 
-        String executablePath = runtimeProvider.getFile("fastsubs").getAbsolutePath();
+        String executablePath = runtimeProvider.getFile("fastsubs-omp").getAbsolutePath();
 
         return executablePath;
     }
@@ -135,35 +111,6 @@ public class FastSubsConnector
     private String getLanguageModelPath()
     {
         return languageModelPath.toAbsolutePath().toString();
-    }
-
-    private List<String> captureProcessOutput(String breakCondition) throws IOException
-    {
-        List<String> results = new ArrayList<>();
-
-        String line = "";
-        while ((line = this.reader.readLine()) != null) {
-            if (line.startsWith(breakCondition)) {
-                break;
-            }
-            results.add(line);
-        }
-
-        return results;
-    }
-
-    private void writeInput(String input) throws IOException
-    {
-        this.writer.write(input + " \n");
-        this.writer.flush();
-    }
-
-    public void destroy() throws IOException
-    {
-        this.writer.flush();
-        this.writer.close();
-
-        this.reader.close();
     }
 
     public static SubstituteVector fastsubs2vector(String line, int maxSubs)
