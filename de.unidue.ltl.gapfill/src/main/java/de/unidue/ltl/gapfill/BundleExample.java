@@ -66,11 +66,10 @@ public class BundleExample
         StringBuilder sb = new StringBuilder();
         for (SubstituteVector s : bundle) {
             sb.append(s.getSentenceWithGap() + "\n");
-            sb.append(s.getSubstitutes() + "\n");
+//            sb.append(s.getSubstitutes() + "\n");
             sb.append("\n");
-            System.out.println(s);
         }
-        FileUtils.writeStringToFile(new File(outputFolder, "bundleResult.txt"), sb.toString());
+        FileUtils.writeStringToFile(new File(outputFolder, word + "_" + pos + "_" + "bundleResult.txt"), sb.toString());
         System.out.println("--- done");
 
     }
