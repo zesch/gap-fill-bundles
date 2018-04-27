@@ -121,6 +121,8 @@ public class BundleExample
 
     private static void writeIdFile(File file, String source) throws Exception
     {
+        file.getParentFile().mkdirs();
+        
         Properties p = new Properties();
         FileOutputStream fos = new FileOutputStream(file.getAbsolutePath());
         p.setProperty("source", source);

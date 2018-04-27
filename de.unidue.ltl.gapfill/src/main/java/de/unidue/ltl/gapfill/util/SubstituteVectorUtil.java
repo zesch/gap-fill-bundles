@@ -47,7 +47,7 @@ public class SubstituteVectorUtil
     {
         if (size > targetVectors.size() + 1) {
             System.err.println(
-                    "Not enough senteces found, cannot return bundle of size ["+size+"]");
+                    "Not enough sentences found, cannot return bundle of size ["+size+"]");
             return Collections.emptyList();
         }
         List<SubstituteVector> resultList = new ArrayList<>();
