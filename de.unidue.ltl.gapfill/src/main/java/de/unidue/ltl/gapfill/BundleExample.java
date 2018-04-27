@@ -83,6 +83,9 @@ public class BundleExample
                 sb.append(s.getSentenceWithGap() + "\n");
                 sb.append("\n");
             }
+            
+            new File(outputFolder).mkdirs();
+            
             FileUtils.writeStringToFile(
                     new File(outputFolder, pos + "_" + word + "_" + "bundleResult.txt"),
                     sb.toString());
