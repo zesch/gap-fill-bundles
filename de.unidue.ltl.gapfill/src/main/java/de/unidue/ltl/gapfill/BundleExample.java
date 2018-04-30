@@ -72,7 +72,7 @@ public class BundleExample
 
         for (FrequencyDistribution<String> d : fds) {
 
-            List<String> mostFrequentSamples = d.getMostFrequentSamples(250);
+            List<String> mostFrequentSamples = d.getMostFrequentSamples(50);
 
             for (String e : mostFrequentSamples) {
                 int lastIndexOf = e.lastIndexOf("_");
