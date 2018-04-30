@@ -42,16 +42,17 @@ public class BundleExample
             String model = p.getProperty("model");
             String indexLocation = p.getProperty("index");
             String outputFolder = p.getProperty("output");
+            String lang = p.getProperty("lang");
             int MAX_SENT_LEN = Integer.parseInt(p.getProperty("sentLen"));
 
             CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(
                     LineTokenTagReader.class, LineTokenTagReader.PARAM_SOURCE_LOCATION,
                     sourceFolder, LineTokenTagReader.PARAM_PATTERNS, "*.txt",
-                    LineTokenTagReader.PARAM_LANGUAGE, "de");
+                    LineTokenTagReader.PARAM_LANGUAGE, lang);
 
             Path indexPath = Paths.get(indexLocation);
 
-            if (rebuildIndex(indexLocation, sourceFolder+"_maxLen_" + MAX_SENT_LEN)) {
+            if (rebuildIndex(indexLocation, sourceFolder+"_maxLen_" + MAX_SENT_LEN + "_lang_" + lang)) {
                 System.out.println("Building index information");
 
                 AnalysisEngineDescription preprocessing = AnalysisEngineFactory

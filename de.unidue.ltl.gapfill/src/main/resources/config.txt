@@ -3,3 +3,4 @@ folder=src/main/resources/corpora/HamburgDepTreebank
 index=target/bundleTmp
 output=target/
 sentLen=15
+lang=de
