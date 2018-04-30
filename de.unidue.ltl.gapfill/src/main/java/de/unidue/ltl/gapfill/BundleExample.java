@@ -53,13 +53,17 @@ public class BundleExample
         String indexLocation = p.getProperty("index");
         String outputFolder = p.getProperty("output");
         int MAX_SENT_LEN = Integer.parseInt(p.getProperty("sentLen"));
+        String nounPre = p.getProperty("nounPrefix");
+        String verbPre = p.getProperty("verbPrefix");
+        String adjPre = p.getProperty("adjPrefix");
+        
         sourceFolder = p.getProperty("folder");
         lang = p.getProperty("lang");
         LIMIT = Integer.parseInt(p.getProperty("numSubs"));
 
-        buildFrequencyDis(nouns, "N");
-        buildFrequencyDis(verbs, "V");
-        buildFrequencyDis(adjectives, "A");
+        buildFrequencyDis(nouns, nounPre);
+        buildFrequencyDis(verbs, verbPre);
+        buildFrequencyDis(adjectives, adjPre);
 
         Set<FrequencyDistribution<String>> fds = new HashSet<>();
         fds.add(nouns);
