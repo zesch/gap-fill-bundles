@@ -2,5 +2,6 @@ model=src/main/resources/gerModel.arpa
 folder=src/main/resources/corpora/HamburgDepTreebank
 index=target/bundleTmp
 output=target/
-sentLen=15
+sentLen=20
+numSubs=250
 lang=de

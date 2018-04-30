@@ -11,7 +11,6 @@ public class SubstituteVectorUtil
             int size)
     {
         if (substituteVectors.size() == 0) {
-            System.out.println("No substitution vectors available");
             return Collections.emptyList();
         }
 
@@ -31,8 +30,6 @@ public class SubstituteVectorUtil
         List<SubstituteVector> greedyBundle = getGreedyBundle(best, substituteVectors, size);
 
         if (greedyBundle.size() < size) {
-            System.out.println("Not enough data found - bundle size reached only a size of ["
-                    + greedyBundle.size() + "] instead of requested [" + size + "]");
             return Collections.emptyList();
         }
 

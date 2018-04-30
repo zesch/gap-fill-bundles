@@ -23,7 +23,7 @@ import de.unidue.ltl.gapfill.util.SubstituteVector;
 
 public class BundleExample
 {
-    static int LIMIT = 25;
+    static int LIMIT = 250;
 
     public static void main(String[] args) throws Exception
     {
@@ -44,6 +44,7 @@ public class BundleExample
             String outputFolder = p.getProperty("output");
             String lang = p.getProperty("lang");
             int MAX_SENT_LEN = Integer.parseInt(p.getProperty("sentLen"));
+            LIMIT = Integer.parseInt(p.getProperty("numSubs"));
 
             CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(
                     LineTokenTagReader.class, LineTokenTagReader.PARAM_SOURCE_LOCATION,
@@ -52,14 +53,16 @@ public class BundleExample
 
             Path indexPath = Paths.get(indexLocation);
 
-            if (rebuildIndex(indexLocation, sourceFolder+"_maxLen_" + MAX_SENT_LEN + "_lang_" + lang)) {
+            if (rebuildIndex(indexLocation,
+                    sourceFolder + "_" + MAX_SENT_LEN + "_" + LIMIT + "_" + lang)) {
                 System.out.println("Building index information");
 
                 AnalysisEngineDescription preprocessing = AnalysisEngineFactory
                         .createEngineDescription(NoOpAnnotator.class);
                 Path lmPath = Paths.get(model);
 
-                CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing, LIMIT, MAX_SENT_LEN);
+                CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing, LIMIT,
+                        MAX_SENT_LEN);
                 indexer.index();
 
                 System.out.println(" --- retrieving substitutes");
@@ -74,20 +77,20 @@ public class BundleExample
             System.out.println(" --- creating bundles");
             SubstituteLookup sl = new SubstituteLookup(indexPath, LIMIT);
             List<SubstituteVector> bundle = sl.getBundle(4, word, pos);
-            
-            if(bundle.isEmpty()) {
+
+            if (bundle.isEmpty()) {
                 System.out.println("Could not create bundle for " + word + "/" + pos);
                 continue;
             }
-            
+
             StringBuilder sb = new StringBuilder();
             for (SubstituteVector s : bundle) {
                 sb.append(s.getSentenceWithGap() + "\n");
                 sb.append("\n");
             }
-            
+
             new File(outputFolder).mkdirs();
-            
+
             FileUtils.writeStringToFile(
                     new File(outputFolder, pos + "_" + word + "_" + "bundleResult.txt"),
                     sb.toString());
@@ -124,7 +127,7 @@ public class BundleExample
     private static void writeIdFile(File file, String source) throws Exception
     {
         file.getParentFile().mkdirs();
-        
+
         Properties p = new Properties();
         FileOutputStream fos = new FileOutputStream(file.getAbsolutePath());
         p.setProperty("source", source);

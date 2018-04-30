@@ -53,7 +53,7 @@ public class SubstituteLookup
 
     public List<SubstituteVector> getBundle(int size, String token, String pos) throws Exception
     {
-        List<SubstituteVector> substituteVectors = getSubstituteVectors(token, pos);
+        List<SubstituteVector> substituteVectors = collectSubstitutions(token, pos);
 
         List<SubstituteVector> result = SubstituteVectorUtil.getBundle(substituteVectors, size);
 
@@ -66,7 +66,7 @@ public class SubstituteLookup
         return result;
     }
 
-    public List<SubstituteVector> getSubstituteVectors(String token, String pos) throws Exception
+    public List<SubstituteVector> collectSubstitutions(String token, String pos) throws Exception
     {
         this.wordsReader = Files.newBufferedReader(targetLocation.resolve(WORDS_FILE_NAME));
         List<SubstituteVector> substituteVectors = new ArrayList<>();
@@ -87,13 +87,13 @@ public class SubstituteLookup
             String[] sentenceTokenPair = occurence.split("_");
             int sentenceId = Integer.parseInt(sentenceTokenPair[0]);
             int tokenId = Integer.parseInt(sentenceTokenPair[1]);
-            substituteVectors.add(getSubstituteVector(token, sentenceId, tokenId));
+            substituteVectors.add(getSubstituteVectorForId(token, sentenceId, tokenId));
         }
 
         return substituteVectors;
     }
 
-    private SubstituteVector getSubstituteVector(String token, int sentenceId, int tokenId)
+    private SubstituteVector getSubstituteVectorForId(String token, int sentenceId, int tokenId)
         throws IOException
     {
 
