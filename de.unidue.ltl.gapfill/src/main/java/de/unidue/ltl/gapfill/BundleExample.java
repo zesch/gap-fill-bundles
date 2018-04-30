@@ -20,6 +20,7 @@ import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.pipeline.JCasIterable;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
+import org.apache.uima.resource.ResourceInitializationException;
 
 import de.tudarmstadt.ukp.dkpro.core.api.frequency.util.FrequencyDistribution;
 import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
@@ -37,6 +38,9 @@ public class BundleExample
     static FrequencyDistribution<String> nouns = new FrequencyDistribution<>();
     static FrequencyDistribution<String> verbs = new FrequencyDistribution<>();
     static FrequencyDistribution<String> adjectives = new FrequencyDistribution<>();
+    
+    static String sourceFolder;
+    static String lang;
 
     public static void main(String[] args) throws Exception
     {
@@ -45,28 +49,17 @@ public class BundleExample
         p.load(f);
         f.close();
 
-        //// for (int i = 1; i < args.length; i += 2) {
-        // String word = args[i];
-        // String pos = args[i + 1];
-        //
-        // System.out.println(word + " " + pos);
-
-        String sourceFolder = p.getProperty("folder");
         String model = p.getProperty("model");
         String indexLocation = p.getProperty("index");
         String outputFolder = p.getProperty("output");
-        String lang = p.getProperty("lang");
         int MAX_SENT_LEN = Integer.parseInt(p.getProperty("sentLen"));
+        sourceFolder = p.getProperty("folder");
+        lang = p.getProperty("lang");
         LIMIT = Integer.parseInt(p.getProperty("numSubs"));
 
-        CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(
-                LineTokenTagReader.class, LineTokenTagReader.PARAM_SOURCE_LOCATION, sourceFolder,
-                LineTokenTagReader.PARAM_PATTERNS, "*.txt", LineTokenTagReader.PARAM_LANGUAGE,
-                lang);
-
-        buildFrequencyDis(reader, nouns, "N");
-        buildFrequencyDis(reader, verbs, "V");
-        buildFrequencyDis(reader, adjectives, "A");
+        buildFrequencyDis(nouns, "N");
+        buildFrequencyDis(verbs, "V");
+        buildFrequencyDis(adjectives, "A");
 
         Set<FrequencyDistribution<String>> fds = new HashSet<>();
         fds.add(nouns);
@@ -92,7 +85,7 @@ public class BundleExample
                             .createEngineDescription(NoOpAnnotator.class);
                     Path lmPath = Paths.get(model);
 
-                    CorpusIndexer indexer = new CorpusIndexer(indexPath, reader, preprocessing,
+                    CorpusIndexer indexer = new CorpusIndexer(indexPath, getReader(), preprocessing,
                             LIMIT, MAX_SENT_LEN);
                     indexer.index();
 
@@ -129,12 +122,18 @@ public class BundleExample
             }
         }
     }
+    
+    private static CollectionReaderDescription getReader() throws ResourceInitializationException {
+        return CollectionReaderFactory.createReaderDescription(
+                LineTokenTagReader.class, LineTokenTagReader.PARAM_SOURCE_LOCATION, sourceFolder,
+                LineTokenTagReader.PARAM_PATTERNS, "*.txt", LineTokenTagReader.PARAM_LANGUAGE,
+                lang);
+    }
 
-    private static void buildFrequencyDis(CollectionReaderDescription reader,
-            FrequencyDistribution<String> fd, String prefix)
+    private static void buildFrequencyDis(FrequencyDistribution<String> fd, String prefix) throws ResourceInitializationException
     {
 
-        for (JCas jcas : new JCasIterable(reader)) {
+        for (JCas jcas : new JCasIterable(getReader())) {
             Collection<Token> tokens = JCasUtil.select(jcas, Token.class);
             for (Token t : tokens) {
                 POS pos = t.getPos();
@@ -148,6 +147,8 @@ public class BundleExample
 
         }
 
+        System.out.println(
+                "POS-Prefix: " + prefix + " found [" + fd.getB() + "] distinct word/pos pairs");
     }
 
     private static boolean rebuildIndex(String index, String source) throws Exception
