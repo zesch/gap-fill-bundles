@@ -76,6 +76,7 @@ public class BundleExample
             List<SubstituteVector> bundle = sl.getBundle(4, word, pos);
             
             if(bundle.isEmpty()) {
+                System.out.println("Could not create bundle for " + word + "/" + pos);
                 continue;
             }
             
