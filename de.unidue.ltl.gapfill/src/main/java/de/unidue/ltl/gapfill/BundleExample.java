@@ -12,10 +12,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.collection.CollectionReaderDescription;
-import org.apache.uima.fit.component.NoOpAnnotator;
-import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.pipeline.JCasIterable;
 import org.apache.uima.fit.util.JCasUtil;
@@ -25,22 +22,23 @@ import org.apache.uima.resource.ResourceInitializationException;
 import de.tudarmstadt.ukp.dkpro.core.api.frequency.util.FrequencyDistribution;
 import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
-import de.unidue.ltl.gapfill.indexer.CorpusIndexer;
+import de.unidue.ltl.gapfill.indexer.IndexBuilder;
 import de.unidue.ltl.gapfill.io.LineTokenTagReader;
 import de.unidue.ltl.gapfill.lookup.SubstituteLookup;
-import de.unidue.ltl.gapfill.subsbuilder.FastSubsConnector;
 import de.unidue.ltl.gapfill.util.SubstituteVector;
 
 public class BundleExample
 {
     static int LIMIT = 250;
+    static int MAX_SENT_LEN=100;
+    static String MODEL="";
 
     static FrequencyDistribution<String> nouns = new FrequencyDistribution<>();
     static FrequencyDistribution<String> verbs = new FrequencyDistribution<>();
     static FrequencyDistribution<String> adjectives = new FrequencyDistribution<>();
-    
-    static String sourceFolder;
-    static String lang;
+
+    static String SOURCE;
+    static String LANGUAGE;
 
     public static void main(String[] args) throws Exception
     {
@@ -49,18 +47,18 @@ public class BundleExample
         p.load(f);
         f.close();
 
-        String model = p.getProperty("model");
+        MODEL = p.getProperty("model");
+        MAX_SENT_LEN = Integer.parseInt(p.getProperty("sentLen"));
+        LIMIT = Integer.parseInt(p.getProperty("numSubs"));
+        SOURCE = p.getProperty("folder");
+        LANGUAGE = p.getProperty("lang");
+        
         String indexLocation = p.getProperty("index");
         String outputFolder = p.getProperty("output");
-        int MAX_SENT_LEN = Integer.parseInt(p.getProperty("sentLen"));
         String nounPre = p.getProperty("nounPrefix");
         String verbPre = p.getProperty("verbPrefix");
         String adjPre = p.getProperty("adjPrefix");
         
-        sourceFolder = p.getProperty("folder");
-        lang = p.getProperty("lang");
-        LIMIT = Integer.parseInt(p.getProperty("numSubs"));
-
         buildFrequencyDis(nouns, nounPre);
         buildFrequencyDis(verbs, verbPre);
         buildFrequencyDis(adjectives, adjPre);
@@ -70,6 +68,12 @@ public class BundleExample
         fds.add(verbs);
         fds.add(adjectives);
 
+        cleanOutputFolder(outputFolder);
+        
+        buildIndex(indexLocation, SOURCE + "_" + MAX_SENT_LEN + "_" + LIMIT
+                + "_" + LANGUAGE + "_" + nounPre + verbPre + adjPre);
+        Path indexPath = Paths.get(indexLocation);
+
         for (FrequencyDistribution<String> d : fds) {
 
             List<String> mostFrequentSamples = d.getMostFrequentSamples(50);
@@ -78,29 +82,6 @@ public class BundleExample
                 int lastIndexOf = e.lastIndexOf("_");
                 String word = e.substring(0, lastIndexOf);
                 String pos = e.substring(lastIndexOf + 1);
-
-                Path indexPath = Paths.get(indexLocation);
-
-                if (rebuildIndex(indexLocation,
-                        sourceFolder + "_" + MAX_SENT_LEN + "_" + LIMIT + "_" + lang + "_" + nounPre+verbPre+adjPre)) {
-                    System.out.println("Building index information");
-
-                    AnalysisEngineDescription preprocessing = AnalysisEngineFactory
-                            .createEngineDescription(NoOpAnnotator.class);
-                    Path lmPath = Paths.get(model);
-
-                    CorpusIndexer indexer = new CorpusIndexer(indexPath, getReader(), preprocessing,
-                            LIMIT, MAX_SENT_LEN);
-                    indexer.index();
-
-                    System.out.println(" --- retrieving substitutes");
-                    FastSubsConnector subsBuilder = new FastSubsConnector(indexPath, lmPath, LIMIT);
-                    subsBuilder.buildSubstitutes();
-                }
-                else {
-                    System.out.println(
-                            "Use existing index from previous runs at [" + indexLocation + "]");
-                }
 
                 System.out.println(" --- creating bundles for [" + word + "/" + pos + "]");
                 SubstituteLookup sl = new SubstituteLookup(indexPath, LIMIT);
@@ -117,24 +98,54 @@ public class BundleExample
                     sb.append("\n");
                 }
 
-                new File(outputFolder).mkdirs();
-
                 FileUtils.writeStringToFile(
-                        new File(outputFolder, pos + "_" + word + "_" + "bundleResult.txt"),
+                        new File(outputFolder, pos + "_" + word + "_" + "bundle.txt"),
                         sb.toString(), "utf-8");
                 // }
             }
         }
     }
-    
-    private static CollectionReaderDescription getReader() throws ResourceInitializationException {
-        return CollectionReaderFactory.createReaderDescription(
-                LineTokenTagReader.class, LineTokenTagReader.PARAM_SOURCE_LOCATION, sourceFolder,
-                LineTokenTagReader.PARAM_PATTERNS, "*.txt", LineTokenTagReader.PARAM_LANGUAGE,
-                lang);
+
+    private static void buildIndex(String indexLocation, String idKey) throws Exception
+    {
+
+        if (rebuildIndex(indexLocation, idKey)) {
+            System.out.println("Building index information");
+
+            IndexBuilder builder = new IndexBuilder();
+            builder.path(Paths.get(indexLocation))
+                   .reader(getReader())
+                   .limit(LIMIT)
+                   .sentLen(MAX_SENT_LEN)
+                   .model(MODEL)
+                   .build();
+        }
+        else {
+            System.out.println(
+                    "Use existing index from previous runs at [" + indexLocation + "]");
+        }        
     }
 
-    private static void buildFrequencyDis(FrequencyDistribution<String> fd, String prefix) throws ResourceInitializationException
+    private static void cleanOutputFolder(String outputFolder)
+    {
+        File folder = new File(outputFolder);
+        FileUtils.deleteQuietly(folder);
+        boolean mkdirs = folder.mkdirs();
+        if (!mkdirs) {
+            throw new IllegalStateException("Could not create output folder");
+        }
+    }
+
+    private static CollectionReaderDescription getReader() throws ResourceInitializationException
+    {
+        return CollectionReaderFactory.createReaderDescription(LineTokenTagReader.class,
+                LineTokenTagReader.PARAM_SOURCE_LOCATION, SOURCE,
+                LineTokenTagReader.PARAM_PATTERNS, "*.txt", LineTokenTagReader.PARAM_LANGUAGE,
+                LANGUAGE);
+    }
+
+    private static void buildFrequencyDis(FrequencyDistribution<String> fd, String prefix)
+        throws ResourceInitializationException
     {
 
         for (JCas jcas : new JCasIterable(getReader())) {
