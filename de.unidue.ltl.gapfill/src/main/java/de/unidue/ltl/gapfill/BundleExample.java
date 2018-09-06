@@ -82,7 +82,7 @@ public class BundleExample
                 Path indexPath = Paths.get(indexLocation);
 
                 if (rebuildIndex(indexLocation,
-                        sourceFolder + "_" + MAX_SENT_LEN + "_" + LIMIT + "_" + lang)) {
+                        sourceFolder + "_" + MAX_SENT_LEN + "_" + LIMIT + "_" + lang + "_" + nounPre+verbPre+adjPre)) {
                     System.out.println("Building index information");
 
                     AnalysisEngineDescription preprocessing = AnalysisEngineFactory
@@ -121,7 +121,7 @@ public class BundleExample
 
                 FileUtils.writeStringToFile(
                         new File(outputFolder, pos + "_" + word + "_" + "bundleResult.txt"),
-                        sb.toString());
+                        sb.toString(), "utf-8");
                 // }
             }
         }
