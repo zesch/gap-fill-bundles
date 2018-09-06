@@ -48,7 +48,7 @@ public class JWeb1TSubsBuilder implements SubstituteBuilder {
 	public void buildSubstitutes() throws Exception {
 
 
-		List<String> sentences = FileUtils.readLines(sentenceFile.toFile());
+		List<String> sentences = FileUtils.readLines(sentenceFile.toFile(), "utf-8");
 		for(String sentence : sentences){
 			String[] split = sentence.split(TAB);
 			for(int i = 1; i < split.length; i++){;

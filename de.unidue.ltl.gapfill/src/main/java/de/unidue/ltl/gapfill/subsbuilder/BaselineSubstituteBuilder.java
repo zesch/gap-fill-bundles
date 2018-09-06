@@ -2,25 +2,14 @@ package de.unidue.ltl.gapfill.subsbuilder;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.uima.analysis_engine.AnalysisEngine;
-import org.apache.uima.analysis_engine.AnalysisEngineDescription;
-import org.apache.uima.collection.CollectionReaderDescription;
-import org.apache.uima.fit.factory.AnalysisEngineFactory;
-import org.apache.uima.fit.pipeline.JCasIterable;
-import org.apache.uima.fit.util.JCasUtil;
-import org.apache.uima.jcas.JCas;
-
 import de.tudarmstadt.ukp.dkpro.core.api.frequency.util.FrequencyDistribution;
-import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.unidue.ltl.gapfill.util.Substitute;
 
 public class BaselineSubstituteBuilder implements SubstituteBuilder {
@@ -76,7 +65,6 @@ public class BaselineSubstituteBuilder implements SubstituteBuilder {
 		bw.flush();
 	}
 	
-	@SuppressWarnings("unchecked")
 	private String getRandomSubstituteVector(){
 		List<String> frequentWords = fd.getMostFrequentSamples(100);
 		

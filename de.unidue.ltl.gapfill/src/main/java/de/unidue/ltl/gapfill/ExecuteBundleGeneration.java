@@ -22,12 +22,12 @@ import org.apache.uima.resource.ResourceInitializationException;
 import de.tudarmstadt.ukp.dkpro.core.api.frequency.util.FrequencyDistribution;
 import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
-import de.unidue.ltl.gapfill.indexer.IndexBuilder;
+import de.unidue.ltl.gapfill.indexer.BundleIndexBuilder;
 import de.unidue.ltl.gapfill.io.LineTokenTagReader;
 import de.unidue.ltl.gapfill.lookup.SubstituteLookup;
 import de.unidue.ltl.gapfill.util.SubstituteVector;
 
-public class BundleExample
+public class ExecuteBundleGeneration
 {
     static int LIMIT = 250;
     static int MAX_SENT_LEN=100;
@@ -112,7 +112,7 @@ public class BundleExample
         if (rebuildIndex(indexLocation, idKey)) {
             System.out.println("Building index information");
 
-            IndexBuilder builder = new IndexBuilder();
+            BundleIndexBuilder builder = new BundleIndexBuilder();
             builder.path(Paths.get(indexLocation))
                    .reader(getReader())
                    .limit(LIMIT)

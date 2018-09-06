@@ -43,7 +43,7 @@ public class SubstituteLookup
             Files.createDirectories(targetLocation);
         }
         // this.wordsReader = Files.newBufferedReader(targetLocation.resolve(WORDS_FILE_NAME));
-        sentences = FileUtils.readLines(targetLocation.resolve(SENTENCE_FILE_NAME).toFile());
+        sentences = FileUtils.readLines(targetLocation.resolve(SENTENCE_FILE_NAME).toFile(), "utf-8");
     }
 
     private String getSentence(int sentenceId) throws IOException

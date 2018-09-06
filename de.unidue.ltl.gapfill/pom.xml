@@ -31,7 +31,7 @@
 								<!-- Set the main class of the executable JAR -->
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>de.unidue.ltl.gapfill.BundleExample</mainClass>
+									<mainClass>de.unidue.ltl.gapfill.ExecuteBundleGeneration</mainClass>
 								</transformer>
 								<!-- Merge the uimaFIT configuration files -->
 								<transformer

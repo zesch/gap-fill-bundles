@@ -7,4 +7,4 @@ numSubs=250
 lang=de
 nounPrefix=N
 verbPrefix=V
-adjPrefix=J
+adjPrefix=A

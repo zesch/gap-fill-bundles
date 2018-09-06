@@ -9,7 +9,7 @@ import org.apache.uima.fit.factory.AnalysisEngineFactory;
 
 import de.unidue.ltl.gapfill.subsbuilder.FastSubsConnector;
 
-public class IndexBuilder
+public class BundleIndexBuilder
 {
 
     private Path indexPath;
@@ -18,31 +18,31 @@ public class IndexBuilder
     private int MAX_SENT_LEN;
     private String model;
 
-    public IndexBuilder path(Path indexPath)
+    public BundleIndexBuilder path(Path indexPath)
     {
         this.indexPath = indexPath;
         return this;
     }
 
-    public IndexBuilder reader(CollectionReaderDescription reader)
+    public BundleIndexBuilder reader(CollectionReaderDescription reader)
     {
         this.reader = reader;
         return this;
     }
 
-    public IndexBuilder limit(int LIMIT)
+    public BundleIndexBuilder limit(int LIMIT)
     {
         this.LIMIT = LIMIT;
         return this;
     }
 
-    public IndexBuilder sentLen(int MAX_SENT_LEN)
+    public BundleIndexBuilder sentLen(int MAX_SENT_LEN)
     {
         this.MAX_SENT_LEN = MAX_SENT_LEN;
         return this;
     }
 
-    public IndexBuilder model(String model)
+    public BundleIndexBuilder model(String model)
     {
         this.model = model;
         return this;
