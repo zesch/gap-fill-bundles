@@ -101,7 +101,8 @@ public class ExecuteBundleGeneration
                 FileUtils.writeStringToFile(
                         new File(outputFolder, pos + "_" + word + "_" + "bundle.txt"),
                         sb.toString(), "utf-8");
-                // }
+                
+                System.out.println();
             }
         }
     }

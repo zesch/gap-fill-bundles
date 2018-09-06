@@ -98,7 +98,6 @@ public class SubstituteLookup
     {
 
         if (subsMap == null) {
-            System.out.println("...building substitution map");
             subsMap = new HashMap<>();
             this.subsReader = Files.newBufferedReader(targetLocation.resolve(SUBS_FILE_NAME));
 
