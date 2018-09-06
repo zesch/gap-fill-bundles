@@ -1,4 +1,4 @@
-package de.unidue.ltl.gapfill.util;
+package de.unidue.ltl.gapfill.bundeling;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +16,6 @@ public class SubstituteVector {
 	private int sentenceId;
 	private int tokenId;
 	private String sentence;
-	private double disambiguity;
 
 	public SubstituteVector() {
 		super();
@@ -130,11 +129,4 @@ public class SubstituteVector {
 		return sb.toString();
 	}
 
-	public void setDisambiguity(double maxD) {
-		this.disambiguity = maxD;
-	}
-
-	public double getDisambiguity() {
-		return this.disambiguity;
-	}
 }

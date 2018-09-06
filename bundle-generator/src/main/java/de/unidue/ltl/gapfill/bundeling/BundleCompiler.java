@@ -1,4 +1,4 @@
-package de.unidue.ltl.gapfill.util;
+package de.unidue.ltl.gapfill.bundeling;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,7 +7,7 @@ import java.util.List;
 public class BundleCompiler
 {
 
-    public static List<SubstituteVector> getBundle(List<SubstituteVector> substituteVectors,
+    public static List<BundleVector> getBundle(List<SubstituteVector> substituteVectors,
             int size)
     {
         if (substituteVectors.size() == 0) {
@@ -27,7 +27,7 @@ public class BundleCompiler
 
         substituteVectors.remove(best);
 
-        List<SubstituteVector> greedyBundle = getGreedyBundle(best, substituteVectors, size);
+        List<BundleVector> greedyBundle = getGreedyBundle(best, substituteVectors, size);
 
         if (greedyBundle.size() < size) {
             return Collections.emptyList();
@@ -36,7 +36,7 @@ public class BundleCompiler
         return greedyBundle;
     }
 
-    private static List<SubstituteVector> getGreedyBundle(SubstituteVector bundleVector,
+    private static List<BundleVector> getGreedyBundle(SubstituteVector bundleVector,
             List<SubstituteVector> targetVectors, int size)
     {
         if (size > targetVectors.size() + 1) {
@@ -44,8 +44,8 @@ public class BundleCompiler
                     "Not enough sentences found, cannot return bundle of size ["+size+"]");
             return Collections.emptyList();
         }
-        List<SubstituteVector> resultList = new ArrayList<>();
-        resultList.add(bundleVector);
+        List<BundleVector> resultList = new ArrayList<>();
+        resultList.add(new BundleVector(bundleVector, 0.0));
         int currentSize = 1;
 
         SubstituteVector combinedVector = bundleVector;
@@ -54,11 +54,11 @@ public class BundleCompiler
 
             SubstituteVector[] subsArr = new SubstituteVector[targetVectors.size()];
             subsArr = targetVectors.toArray(subsArr);
-            SubstituteVector bestSub = getBestSubstituteVector(combinedVector, subsArr);
+            BundleVector bestSub = getBestSubstituteVector(combinedVector, subsArr);
             resultList.add(bestSub);
-            targetVectors.remove(bestSub);
+            targetVectors.remove(bestSub.vector);
 
-            combinedVector = combineMultipleVectors(combinedVector, bestSub);
+            combinedVector = combineMultipleVectors(combinedVector, bestSub.vector);
             currentSize++;
         }
 
@@ -91,7 +91,7 @@ public class BundleCompiler
         return resultVector;
     }
 
-    static SubstituteVector getBestSubstituteVector(SubstituteVector bundleVector,
+    static BundleVector getBestSubstituteVector(SubstituteVector bundleVector,
             SubstituteVector... targetVectors)
     {
         if (targetVectors.length == 0) {
@@ -110,10 +110,8 @@ public class BundleCompiler
                 maxD = D;
             }
         }
-
-        result.setDisambiguity(maxD);
         
-        return result;
+        return new BundleVector(result, maxD);
     }
 
     /**

@@ -1,8 +1,11 @@
-package de.unidue.ltl.gapfill.util;
+package de.unidue.ltl.gapfill.bundeling;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
+import de.unidue.ltl.gapfill.bundeling.BundleCompiler;
+import de.unidue.ltl.gapfill.bundeling.SubstituteVector;
 
 public class SubstituteVectorUtilTest {
 
@@ -69,7 +72,7 @@ public class SubstituteVectorUtilTest {
 	
 	@Test
 	public void testBestVector() {
-		SubstituteVector result = BundleCompiler.getBestSubstituteVector(sv1, sv2, sv3, sv4, sv1_b);
+		SubstituteVector result = BundleCompiler.getBestSubstituteVector(sv1, sv2, sv3, sv4, sv1_b).vector;
 		assertEquals(sv1_b, result);
 	}
 }

@@ -17,7 +17,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.uima.pear.util.FileUtil;
 
 import de.tudarmstadt.ukp.dkpro.core.api.resources.RuntimeProvider;
-import de.unidue.ltl.gapfill.util.SubstituteVector;
+import de.unidue.ltl.gapfill.bundeling.SubstituteVector;
 
 /**
  * Wrapper for the FASTSUBS library. FASTSUBS is a program that finds the most likely substitutes

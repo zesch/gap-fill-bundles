@@ -12,9 +12,10 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
+import de.unidue.ltl.gapfill.bundeling.BundleCompiler;
+import de.unidue.ltl.gapfill.bundeling.BundleVector;
+import de.unidue.ltl.gapfill.bundeling.SubstituteVector;
 import de.unidue.ltl.gapfill.subsbuilder.FastSubs;
-import de.unidue.ltl.gapfill.util.SubstituteVector;
-import de.unidue.ltl.gapfill.util.BundleCompiler;
 
 public class SubstituteLookup
 {
@@ -51,19 +52,14 @@ public class SubstituteLookup
         return sentences.get(sentenceId);
     }
 
-    public List<SubstituteVector> getBundle(int size, String token, String pos) throws Exception
+    public List<BundleVector> getBundle(int size, String token, String pos) throws Exception
     {
         List<SubstituteVector> substituteVectors = collectSubstitutions(token, pos);
         
-        if(substituteVectors.size() >= 4) {
-        	int a=0;
-        	a++;
-        }
-
-        List<SubstituteVector> result = BundleCompiler.getBundle(substituteVectors, size);
+        List<BundleVector> result = BundleCompiler.getBundle(substituteVectors, size);
 
         int i = 1;
-        for (SubstituteVector sv : result) {
+        for (BundleVector sv : result) {
             System.out.println(i + ": " + sv.getSentenceWithGap());
             i++;
         }

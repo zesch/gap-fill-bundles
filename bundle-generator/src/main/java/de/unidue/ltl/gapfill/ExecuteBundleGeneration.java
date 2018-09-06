@@ -22,10 +22,10 @@ import org.apache.uima.resource.ResourceInitializationException;
 import de.tudarmstadt.ukp.dkpro.core.api.frequency.util.FrequencyDistribution;
 import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
+import de.unidue.ltl.gapfill.bundeling.BundleVector;
 import de.unidue.ltl.gapfill.indexer.BundleIndexBuilder;
 import de.unidue.ltl.gapfill.io.LineTokenTagReader;
 import de.unidue.ltl.gapfill.lookup.SubstituteLookup;
-import de.unidue.ltl.gapfill.util.SubstituteVector;
 
 public class ExecuteBundleGeneration
 {
@@ -96,7 +96,7 @@ public class ExecuteBundleGeneration
 
                 System.out.println(" --- creating bundles for [" + word + "/" + pos + "]");
                 SubstituteLookup sl = new SubstituteLookup(indexPath, LIMIT);
-                List<SubstituteVector> bundle = sl.getBundle(4, word, pos);
+                List<BundleVector> bundle = sl.getBundle(4, word, pos);
 
                 if (bundle.isEmpty()) {
                     System.out.println("Could not create bundle for " + word + "/" + pos);
@@ -104,8 +104,8 @@ public class ExecuteBundleGeneration
                 }
 
                 StringBuilder sb = new StringBuilder();
-                for (SubstituteVector s : bundle) {
-                    sb.append(s.getSentenceWithGap() + "\n");
+                for (BundleVector s : bundle) {
+                    sb.append(s.getSentenceWithGap() + "( " + s.getDisambiguity() + " )\n");
                     sb.append("\n");
                 }
 
