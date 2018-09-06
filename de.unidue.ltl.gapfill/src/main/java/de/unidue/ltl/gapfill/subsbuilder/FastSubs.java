@@ -25,8 +25,8 @@ import de.unidue.ltl.gapfill.util.SubstituteVector;
  * 
  * @see <a href="https://github.com/ai-ku/fastsubs">https://github.com/ai-ku/fastsubs</a>
  */
-public class FastSubsConnector
-    implements SubstituteBuilder
+public class FastSubs
+    implements SubstitutionSource
 {
 
     public static final String DOCS_FILE_NAME = "docs.txt";
@@ -41,7 +41,7 @@ public class FastSubsConnector
     private Path inputFile;
     private Path outputFile;
 
-    public FastSubsConnector(Path indexPath, Path languageModelPath, int nrOfSubs)
+    public FastSubs(Path indexPath, Path languageModelPath, int nrOfSubs)
     {
         this.inputFile = indexPath.resolve(DOCS_FILE_NAME);
         this.outputFile = indexPath.resolve(SUBS_FILE_NAME);

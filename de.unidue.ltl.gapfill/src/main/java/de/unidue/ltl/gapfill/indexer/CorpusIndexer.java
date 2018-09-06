@@ -22,7 +22,7 @@ import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS_NOUN;
 import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS_VERB;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
-import de.unidue.ltl.gapfill.subsbuilder.FastSubsConnector;
+import de.unidue.ltl.gapfill.subsbuilder.FastSubs;
 
 public class CorpusIndexer
 {
@@ -102,7 +102,7 @@ public class CorpusIndexer
 
         // relying on fastsubs EXIT token
         // currently no other way to break reading from the fastsubs process
-        docsWriter.write(FastSubsConnector.EXIT_TOKEN);
+        docsWriter.write(FastSubs.EXIT_TOKEN);
         docsWriter.newLine();
         docsWriter.flush();
         docsWriter.close();

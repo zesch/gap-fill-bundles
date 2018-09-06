@@ -29,21 +29,32 @@ import de.unidue.ltl.gapfill.util.SubstituteVector;
 
 public class ExecuteBundleGeneration
 {
-    static int LIMIT = 250;
-    static int MAX_SENT_LEN=100;
-    static String MODEL="";
+    int LIMIT = 250;
+    int MAX_SENT_LEN=100;
+    String MODEL="";
 
-    static FrequencyDistribution<String> nouns = new FrequencyDistribution<>();
-    static FrequencyDistribution<String> verbs = new FrequencyDistribution<>();
-    static FrequencyDistribution<String> adjectives = new FrequencyDistribution<>();
+    FrequencyDistribution<String> nouns = new FrequencyDistribution<>();
+    FrequencyDistribution<String> verbs = new FrequencyDistribution<>();
+    FrequencyDistribution<String> adjectives = new FrequencyDistribution<>();
 
-    static String SOURCE;
-    static String LANGUAGE;
+    String SOURCE;
+    String LANGUAGE;
+    String indexLocation;
+    String outputFolder;
+    String nounPre;
+    String verbPre;
+    String adjPre;
 
     public static void main(String[] args) throws Exception
     {
+    	
+    	ExecuteBundleGeneration bundles = new ExecuteBundleGeneration();
+    	bundles.generate(new File(args[0]));
+    }
+    
+    public void generate(File config) throws Exception {
         Properties p = new Properties();
-        FileInputStream f = new FileInputStream(args[0]);
+        FileInputStream f = new FileInputStream(config);
         p.load(f);
         f.close();
 
@@ -53,11 +64,11 @@ public class ExecuteBundleGeneration
         SOURCE = p.getProperty("folder");
         LANGUAGE = p.getProperty("lang");
         
-        String indexLocation = p.getProperty("index");
-        String outputFolder = p.getProperty("output");
-        String nounPre = p.getProperty("nounPrefix");
-        String verbPre = p.getProperty("verbPrefix");
-        String adjPre = p.getProperty("adjPrefix");
+        indexLocation = p.getProperty("index");
+        outputFolder = p.getProperty("output");
+        nounPre = p.getProperty("nounPrefix");
+        verbPre = p.getProperty("verbPrefix");
+        adjPre = p.getProperty("adjPrefix");
         
         buildFrequencyDis(nouns, nounPre);
         buildFrequencyDis(verbs, verbPre);
@@ -107,7 +118,7 @@ public class ExecuteBundleGeneration
         }
     }
 
-    private static void buildIndex(String indexLocation, String idKey) throws Exception
+    private void buildIndex(String indexLocation, String idKey) throws Exception
     {
 
         if (rebuildIndex(indexLocation, idKey)) {
@@ -119,7 +130,7 @@ public class ExecuteBundleGeneration
                    .limit(LIMIT)
                    .sentLen(MAX_SENT_LEN)
                    .model(MODEL)
-                   .build();
+                   .index();
         }
         else {
             System.out.println(
@@ -137,7 +148,7 @@ public class ExecuteBundleGeneration
         }
     }
 
-    private static CollectionReaderDescription getReader() throws ResourceInitializationException
+    private CollectionReaderDescription getReader() throws ResourceInitializationException
     {
         return CollectionReaderFactory.createReaderDescription(LineTokenTagReader.class,
                 LineTokenTagReader.PARAM_SOURCE_LOCATION, SOURCE,
@@ -145,7 +156,7 @@ public class ExecuteBundleGeneration
                 LANGUAGE);
     }
 
-    private static void buildFrequencyDis(FrequencyDistribution<String> fd, String prefix)
+    private void buildFrequencyDis(FrequencyDistribution<String> fd, String prefix)
         throws ResourceInitializationException
     {
 

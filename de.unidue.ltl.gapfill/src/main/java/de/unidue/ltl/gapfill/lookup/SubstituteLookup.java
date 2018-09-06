@@ -12,9 +12,9 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
-import de.unidue.ltl.gapfill.subsbuilder.FastSubsConnector;
+import de.unidue.ltl.gapfill.subsbuilder.FastSubs;
 import de.unidue.ltl.gapfill.util.SubstituteVector;
-import de.unidue.ltl.gapfill.util.SubstituteVectorUtil;
+import de.unidue.ltl.gapfill.util.BundleCompiler;
 
 public class SubstituteLookup
 {
@@ -54,8 +54,13 @@ public class SubstituteLookup
     public List<SubstituteVector> getBundle(int size, String token, String pos) throws Exception
     {
         List<SubstituteVector> substituteVectors = collectSubstitutions(token, pos);
+        
+        if(substituteVectors.size() >= 4) {
+        	int a=0;
+        	a++;
+        }
 
-        List<SubstituteVector> result = SubstituteVectorUtil.getBundle(substituteVectors, size);
+        List<SubstituteVector> result = BundleCompiler.getBundle(substituteVectors, size);
 
         int i = 1;
         for (SubstituteVector sv : result) {
@@ -118,7 +123,7 @@ public class SubstituteLookup
         }
 
         String line = subsMap.get(sentenceId + "_" + tokenId);
-        SubstituteVector sub = FastSubsConnector.fastsubs2vector(line, maxSubs);
+        SubstituteVector sub = FastSubs.fastsubs2vector(line, maxSubs);
         sub.setSentence(getSentence(sentenceId));
         sub.setTokenId(tokenId);
         sub.setToken(token);

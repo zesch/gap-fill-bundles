@@ -7,7 +7,7 @@ import org.apache.uima.collection.CollectionReaderDescription;
 import org.apache.uima.fit.component.NoOpAnnotator;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
 
-import de.unidue.ltl.gapfill.subsbuilder.FastSubsConnector;
+import de.unidue.ltl.gapfill.subsbuilder.FastSubs;
 
 public class BundleIndexBuilder
 {
@@ -48,7 +48,7 @@ public class BundleIndexBuilder
         return this;
     }
 
-    public void build() throws Exception
+    public void index() throws Exception
     {
         Path lmPath = Paths.get(model);
 
@@ -57,7 +57,7 @@ public class BundleIndexBuilder
         indexer.index();
 
         System.out.println(" --- retrieving substitutes");
-        FastSubsConnector subsBuilder = new FastSubsConnector(indexPath, lmPath, LIMIT);
+        FastSubs subsBuilder = new FastSubs(indexPath, lmPath, LIMIT);
         subsBuilder.buildSubstitutes();
     }
 

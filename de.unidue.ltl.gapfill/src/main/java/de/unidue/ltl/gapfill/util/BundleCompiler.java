@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SubstituteVectorUtil
+public class BundleCompiler
 {
 
     public static List<SubstituteVector> getBundle(List<SubstituteVector> substituteVectors,
@@ -36,13 +36,7 @@ public class SubstituteVectorUtil
         return greedyBundle;
     }
 
-    public static List<SubstituteVector> getBundle(SubstituteVector bundleVector,
-            List<SubstituteVector> targetVectors, int size)
-    {
-        return getGreedyBundle(bundleVector, targetVectors, size);
-    }
-
-    public static List<SubstituteVector> getGreedyBundle(SubstituteVector bundleVector,
+    private static List<SubstituteVector> getGreedyBundle(SubstituteVector bundleVector,
             List<SubstituteVector> targetVectors, int size)
     {
         if (size > targetVectors.size() + 1) {
@@ -64,14 +58,14 @@ public class SubstituteVectorUtil
             resultList.add(bestSub);
             targetVectors.remove(bestSub);
 
-            combinedVector = combineVectors(combinedVector, bestSub);
+            combinedVector = combineMultipleVectors(combinedVector, bestSub);
             currentSize++;
         }
 
         return resultList;
     }
 
-    public static SubstituteVector combineVectors(SubstituteVector... vectors)
+    static SubstituteVector combineMultipleVectors(SubstituteVector... vectors)
     {
         if (vectors.length == 0) {
             return null;
@@ -85,7 +79,7 @@ public class SubstituteVectorUtil
         return result;
     }
 
-    public static SubstituteVector getCombinedVector(SubstituteVector v1, SubstituteVector v2)
+    static SubstituteVector getCombinedVector(SubstituteVector v1, SubstituteVector v2)
     {
         SubstituteVector resultVector = new SubstituteVector(v1.getToken());
         for (String substitute : v1.getSubstitutes()) {
@@ -97,7 +91,7 @@ public class SubstituteVectorUtil
         return resultVector;
     }
 
-    public static SubstituteVector getBestSubstituteVector(SubstituteVector bundleVector,
+    static SubstituteVector getBestSubstituteVector(SubstituteVector bundleVector,
             SubstituteVector... targetVectors)
     {
         if (targetVectors.length == 0) {
@@ -108,7 +102,7 @@ public class SubstituteVectorUtil
         double maxD = -Double.MAX_VALUE; // disambiguation measure to maximize
 
         for (SubstituteVector targetVector : targetVectors) {
-            SubstituteVector combinedVector = SubstituteVectorUtil.getCombinedVector(bundleVector,
+            SubstituteVector combinedVector = BundleCompiler.getCombinedVector(bundleVector,
                     targetVector);
             double D = getDisambiguity(combinedVector);
             if (D > maxD) {
@@ -117,6 +111,8 @@ public class SubstituteVectorUtil
             }
         }
 
+        result.setDisambiguity(maxD);
+        
         return result;
     }
 
@@ -124,7 +120,7 @@ public class SubstituteVectorUtil
      * @param sv
      * @return The disambiguation measure D given a SubstituteVector
      */
-    public static double getDisambiguity(SubstituteVector sv)
+    static double getDisambiguity(SubstituteVector sv)
     {
         double targetWeight = sv.getSubstituteWeight(sv.getToken());
 

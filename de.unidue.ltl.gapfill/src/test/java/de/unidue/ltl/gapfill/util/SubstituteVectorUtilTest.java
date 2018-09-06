@@ -44,32 +44,32 @@ public class SubstituteVectorUtilTest {
 	
 	@Test
 	public void testVectorCombination() {		
-		SubstituteVector result = SubstituteVectorUtil.getCombinedVector(sv1, sv2);
+		SubstituteVector result = BundleCompiler.getCombinedVector(sv1, sv2);
 		assertEquals(1, result.getSubstitutes().size());
 		assertEquals(-3.40000, result.getSubstituteWeight("money"), 0.00001);
 		assertEquals(0.0, result.getSubstituteWeight("test"), 0.00001);
 		
-		SubstituteVector result2 = SubstituteVectorUtil.combineVectors(sv1, sv2);
+		SubstituteVector result2 = BundleCompiler.combineMultipleVectors(sv1, sv2);
 		assertEquals(1, result2.getSubstitutes().size());
 		assertEquals(-3.40000, result2.getSubstituteWeight("money"), 0.00001);
 		assertEquals(0.0, result2.getSubstituteWeight("test"), 0.00001);
 		
-		SubstituteVector result3 = SubstituteVectorUtil.combineVectors(sv1, sv2, sv3, sv4);
+		SubstituteVector result3 = BundleCompiler.combineMultipleVectors(sv1, sv2, sv3, sv4);
 		assertEquals(1, result3.getSubstitutes().size());
 		assertEquals(-7.60000, result3.getSubstituteWeight("money"), 0.00001);
 	}
 	
 	@Test
 	public void testDisambiguationMeasure() {
-		assertEquals(0.0, SubstituteVectorUtil.getDisambiguity(sv1), 0.01);
-		assertEquals(-0.2, SubstituteVectorUtil.getDisambiguity(sv2), 0.01);
-		assertEquals(0.9, SubstituteVectorUtil.getDisambiguity(sv3), 0.01);
-		assertEquals(-2.1, SubstituteVectorUtil.getDisambiguity(sv4), 0.01);
+		assertEquals(0.0, BundleCompiler.getDisambiguity(sv1), 0.01);
+		assertEquals(-0.2, BundleCompiler.getDisambiguity(sv2), 0.01);
+		assertEquals(0.9, BundleCompiler.getDisambiguity(sv3), 0.01);
+		assertEquals(-2.1, BundleCompiler.getDisambiguity(sv4), 0.01);
 	}
 	
 	@Test
 	public void testBestVector() {
-		SubstituteVector result = SubstituteVectorUtil.getBestSubstituteVector(sv1, sv2, sv3, sv4, sv1_b);
+		SubstituteVector result = BundleCompiler.getBestSubstituteVector(sv1, sv2, sv3, sv4, sv1_b);
 		assertEquals(sv1_b, result);
 	}
 }
