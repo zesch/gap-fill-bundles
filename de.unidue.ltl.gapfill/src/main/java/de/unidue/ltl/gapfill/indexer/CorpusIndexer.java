@@ -16,9 +16,10 @@ import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 
 import de.tudarmstadt.ukp.dkpro.core.api.frequency.util.ConditionalFrequencyDistribution;
-import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.ADJ;
-import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.N;
 import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
+import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS_ADJ;
+import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS_NOUN;
+import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS_VERB;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.unidue.ltl.gapfill.subsbuilder.FastSubsConnector;
@@ -133,7 +134,7 @@ public class CorpusIndexer
 
             POS pos = token.getPos();
 
-            if (pos instanceof N || pos.getPosValue().startsWith("V") || pos instanceof ADJ) {
+            if (pos instanceof POS_NOUN || pos instanceof POS_VERB || pos instanceof POS_ADJ) {
                 String wordKey = getWordKey(token.getCoveredText(), pos.getPosValue());
                 String wordPosition = getWordPosition(sentenceId, tokenPosition);
                 word2sentence.inc(wordKey, wordPosition);

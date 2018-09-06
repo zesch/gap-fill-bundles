@@ -146,7 +146,7 @@
 			<dependency>
 				<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
 				<artifactId>de.tudarmstadt.ukp.dkpro.core-asl</artifactId>
-				<version>1.8.0</version>
+				<version>1.9.3</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
